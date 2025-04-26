@@ -12,6 +12,18 @@
 #include "GameState.h"
 #include "PlayerInput.h"
 
+#ifdef _DEBUG
+#pragma comment(lib, "sfml-system-d.lib")
+#pragma comment(lib, "sfml-network-d.lib")
+#else
+#pragma comment(lib, "sfml-system.lib")
+#pragma comment(lib, "sfml-network.lib")
+#endif
+
+
+
+
+
 // Global flag for graceful shutdown
 volatile bool running = true;
 
