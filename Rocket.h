@@ -3,8 +3,6 @@
 #include "GameObject.h"
 #include <vector>
 
-class Planet;
-
 class Rocket : public GameObject {
 private:
     float rotation;

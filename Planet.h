@@ -18,4 +18,5 @@ public:
     void setMass(float newMass);
     void updateRadiusFromMass();
     void getColor(uint8_t& r, uint8_t& g, uint8_t& b) const;
+    void setPosition(sf::Vector2f pos);
 };

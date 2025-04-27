@@ -50,3 +50,8 @@ void Planet::getColor(uint8_t& r, uint8_t& g, uint8_t& b) const
     g = colorG;
     b = colorB;
 }
+
+void Planet::setPosition(sf::Vector2f pos)
+{
+    position = pos;
+}

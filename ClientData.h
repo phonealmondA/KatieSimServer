@@ -19,7 +19,7 @@ struct ClientData {
     ClientData(int id, sf::TcpSocket* sock)
         : clientId(id),
         socket(sock),
-        address(sock ? (sock->getRemoteAddress() ? *sock->getRemoteAddress() : sf::IpAddress()) : sf::IpAddress()),
+        address(sock&& sock->getRemoteAddress() ? *sock->getRemoteAddress() : sf::IpAddress::None),
         port(0),
         lastActivity(std::chrono::steady_clock::now()),
         authenticated(false),

@@ -1,6 +1,7 @@
 // ClientManager.cpp
 #include "ClientManager.h"
 #include <sstream>
+#include "GameConstants.h"
 
 ClientManager::ClientManager(ServerLogger& logger, ServerConfig& config)
     : logger(logger), config(config), nextClientId(1)
@@ -25,9 +26,14 @@ int ClientManager::addClient(sf::TcpSocket* socket)
     ClientData* client = new ClientData(clientId, socket);
     clients[clientId] = client;
 
+    sf::IpAddress address = sf::IpAddress::None;
+    if (socket && socket->getRemoteAddress()) {
+        address = *socket->getRemoteAddress();
+    }
+
     std::stringstream ss;
     ss << "Client " << clientId << " connected from "
-        << client->address.toString() << ":" << socket->getLocalPort();
+        << address.toString() << ":" << socket->getLocalPort();
     logger.info(ss.str());
 
     return clientId;
@@ -161,9 +167,16 @@ void ClientManager::logClientInfo()
         ClientData* client = pair.second;
         std::stringstream clientSs;
         clientSs << "Client " << client->clientId
-            << " [" << client->username << "] from "
-            << client->address.toString()
-            << " - Ping: " << client->pingMs << "ms"
+            << " [" << client->username << "] from ";
+
+        if (client->socket && client->socket->getRemoteAddress()) {
+            clientSs << client->socket->getRemoteAddress()->toString();
+        }
+        else {
+            clientSs << "unknown";
+        }
+
+        clientSs << " - Ping: " << client->pingMs << "ms"
             << " - Packet Loss: " << client->packetLoss;
         logger.info(clientSs.str());
     }

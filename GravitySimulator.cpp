@@ -166,7 +166,6 @@ void GravitySimulator::handleCollisions()
     }
 
     // Handle planet-planet collisions (merge planets)
-    // This is simplified compared to your game implementation
     for (size_t i = 1; i < planets.size(); i++) {  // Start at 1 to skip the sun
         for (size_t j = i + 1; j < planets.size(); j++) {
             sf::Vector2f direction = planets[j]->getPosition() - planets[i]->getPosition();
@@ -186,9 +185,10 @@ void GravitySimulator::handleCollisions()
                     planets[i]->setMass(newMass);
                     planets[i]->setVelocity(newVelocity);
 
-                    // Remove planet j
-                    removePlanet(planets[j]);
-                    j--; // Adjust index since we removed an element
+                    // Remove planet j (mark for later removal to avoid iterator invalidation)
+                    Planet* planetToRemove = planets[j];
+                    planets.erase(planets.begin() + j);
+                    j--; // Adjust index
                 }
                 else {
                     // Planet j absorbs planet i
@@ -203,9 +203,10 @@ void GravitySimulator::handleCollisions()
                     planets[j]->setVelocity(newVelocity);
 
                     // Remove planet i
-                    removePlanet(planets[i]);
-                    i--; // Adjust index since we removed an element
-                    break; // Break out of inner loop since planet i is gone
+                    Planet* planetToRemove = planets[i];
+                    planets.erase(planets.begin() + i);
+                    i--; // Adjust index
+                    break; // Break inner loop since i is now invalid
                 }
             }
         }
