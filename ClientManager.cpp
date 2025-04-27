@@ -26,7 +26,7 @@ int ClientManager::addClient(sf::TcpSocket* socket)
     ClientData* client = new ClientData(clientId, socket);
     clients[clientId] = client;
 
-    sf::IpAddress address = sf::IpAddress::None;
+    sf::IpAddress address = sf::IpAddress::Any;
     if (socket && socket->getRemoteAddress()) {
         address = *socket->getRemoteAddress();
     }
@@ -87,7 +87,7 @@ void ClientManager::sendToAll(sf::Packet& packet)
     for (auto& pair : clients) {
         if (pair.second->socket && pair.second->authenticated) {
             sf::Socket::Status status = pair.second->socket->send(packet);
-            if (status != sf::Socket::Done) {
+            if (status != sf::Socket::Status::Done) {
                 pair.second->packetLoss++;
 
                 if (config.isVerbose()) {
@@ -96,7 +96,7 @@ void ClientManager::sendToAll(sf::Packet& packet)
                     logger.warning(ss.str());
                 }
 
-                if (status == sf::Socket::Disconnected) {
+                if (status == sf::Socket::Status::Disconnected) {
                     pair.second->pendingDisconnect = true;
                 }
             }
@@ -111,7 +111,7 @@ void ClientManager::sendTo(int clientId, sf::Packet& packet)
     auto it = clients.find(clientId);
     if (it != clients.end() && it->second->socket) {
         sf::Socket::Status status = it->second->socket->send(packet);
-        if (status != sf::Socket::Done) {
+        if (status != sf::Socket::Status::Done) {
             it->second->packetLoss++;
 
             if (config.isVerbose()) {
@@ -120,7 +120,7 @@ void ClientManager::sendTo(int clientId, sf::Packet& packet)
                 logger.warning(ss.str());
             }
 
-            if (status == sf::Socket::Disconnected) {
+            if (status == sf::Socket::Status::Disconnected) {
                 it->second->pendingDisconnect = true;
             }
         }

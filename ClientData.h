@@ -19,7 +19,8 @@ struct ClientData {
     ClientData(int id, sf::TcpSocket* sock)
         : clientId(id),
         socket(sock),
-        address(sock&& sock->getRemoteAddress() ? *sock->getRemoteAddress() : sf::IpAddress::None),
+        // Use the factory method in SFML 3.0
+        address(sock&& sock->getRemoteAddress() ? *sock->getRemoteAddress() : sf::IpAddress::Any),
         port(0),
         lastActivity(std::chrono::steady_clock::now()),
         authenticated(false),

@@ -4,6 +4,7 @@
 #include <mutex>
 #include <thread>
 #include <atomic>
+#include <functional>  // Add this for std::function
 #include "ClientManager.h"
 #include "ServerLogger.h"
 #include "ServerConfig.h"

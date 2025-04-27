@@ -6,6 +6,7 @@
 #include <chrono>
 #include <iomanip>
 #include <mutex>
+#include <sstream> 
 
 class ServerLogger {
 private:
@@ -16,8 +17,13 @@ private:
     std::string getTimestamp() {
         auto now = std::chrono::system_clock::now();
         auto time = std::chrono::system_clock::to_time_t(now);
+
+        // Use localtime_s instead of localtime for safety
+        std::tm timeInfo;
+        localtime_s(&timeInfo, &time);
+
         std::stringstream ss;
-        ss << std::put_time(std::localtime(&time), "%Y-%m-%d %H:%M:%S");
+        ss << std::put_time(&timeInfo, "%Y-%m-%d %H:%M:%S");
         return ss.str();
     }
 

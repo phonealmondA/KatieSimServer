@@ -24,7 +24,7 @@ bool NetworkManager::start()
     }
 
     // Start listening for connections
-    if (listener.listen(config.getPort()) != sf::Socket::Done) {
+    if (listener.listen(config.getPort()) != sf::Socket::Status::Done) {
         std::stringstream ss;
         ss << "Failed to bind to port " << config.getPort();
         logger.error(ss.str());
@@ -38,12 +38,22 @@ bool NetworkManager::start()
     logger.info(ss.str());
 
     // Log local IP for convenience
-    sf::IpAddress localIp = sf::IpAddress::getLocalAddress();
-    logger.info("Local IP address: " + localIp.toString());
+    auto localIpOpt = sf::IpAddress::getLocalAddress();
+    if (localIpOpt) {
+        logger.info("Local IP address: " + localIpOpt->toString());
+    }
+    else {
+        logger.warning("Could not determine local IP address");
+    }
 
     try {
-        sf::IpAddress publicIp = sf::IpAddress::getPublicAddress(sf::seconds(2));
-        logger.info("Public IP address: " + publicIp.toString());
+        auto publicIpOpt = sf::IpAddress::getPublicAddress(sf::seconds(2));
+        if (publicIpOpt) {
+            logger.info("Public IP address: " + publicIpOpt->toString());
+        }
+        else {
+            logger.warning("Could not determine public IP address");
+        }
     }
     catch (...) {
         logger.warning("Could not determine public IP address");
@@ -131,7 +141,7 @@ void NetworkManager::acceptClientConnections()
     while (running.load()) {
         sf::TcpSocket* newClient = new sf::TcpSocket();
 
-        if (listener.accept(*newClient) == sf::Socket::Done) {
+        if (listener.accept(*newClient) == sf::Socket::Status::Done) {
             newClient->setBlocking(false);
 
             // Add client to manager
@@ -168,11 +178,11 @@ void NetworkManager::receiveClientMessages()
             sf::Packet packet;
             sf::Socket::Status status = client->socket->receive(packet);
 
-            if (status == sf::Socket::Done) {
+            if (status == sf::Socket::Status::Done) {
                 client->updateActivity();
                 handleClientMessage(clientId, packet);
             }
-            else if (status == sf::Socket::Disconnected) {
+            else if (status == sf::Socket::Status::Disconnected) {
                 if (onClientDisconnected) {
                     onClientDisconnected(clientId);
                 }
