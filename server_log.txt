@@ -32,3 +32,62 @@
 2025-04-26 19:54:35 [INFO] Public IP address: 174.90.223.29
 2025-04-26 19:54:35 [INFO] Server started successfully!
 2025-04-26 19:54:45 [INFO] Connected clients: 0
+2025-04-28 12:18:03 [INFO] KatieServer starting up...
+2025-04-28 12:18:03 [INFO] Game server initialized with 10 planets
+2025-04-28 12:18:03 [INFO] Server started on port 5000
+2025-04-28 12:18:03 [INFO] Local IP address: 172.20.10.6
+2025-04-28 12:18:04 [INFO] Public IP address: 174.90.223.9
+2025-04-28 12:18:04 [INFO] Server started successfully!
+2025-04-28 12:18:14 [INFO] Connected clients: 0
+2025-04-28 12:18:24 [INFO] Connected clients: 0
+2025-04-28 12:18:34 [INFO] Connected clients: 0
+2025-04-28 12:18:44 [INFO] Connected clients: 0
+2025-04-28 12:18:48 [INFO] Client 1 connected from 127.0.0.1:5000
+2025-04-28 12:18:48 [INFO] New client connected with ID: 1
+2025-04-28 12:55:10 [INFO] KatieServer starting up...
+2025-04-28 12:55:10 [INFO] Game server initialized with 10 planets
+2025-04-28 12:55:10 [INFO] Server started on port 5000
+2025-04-28 12:55:10 [INFO] Local IP address: 172.20.10.6
+2025-04-28 12:55:11 [INFO] Public IP address: 174.90.223.9
+2025-04-28 12:55:11 [INFO] Server started successfully!
+2025-04-28 12:55:19 [INFO] Client 1 connected from 127.0.0.1:5000
+2025-04-28 12:55:19 [ERROR] Exception handling message from client 1: resource deadlock would occur: resource deadlock would occur
+2025-04-28 12:55:19 [INFO] New client connected with ID: 1
+2025-04-28 12:55:21 [INFO] Connected clients: 1
+2025-04-28 12:55:21 [INFO] Client 1 [Player_1] from 127.0.0.1 - Ping: 0ms - Packet Loss: 0
+2025-04-28 12:55:25 [WARNING] Client 1 timed out
+2025-04-28 12:55:25 [INFO] Client 1 disconnected
+2025-04-28 12:55:31 [INFO] Connected clients: 0
+2025-04-28 12:55:41 [INFO] Connected clients: 0
+2025-04-28 12:55:51 [INFO] Connected clients: 0
+2025-04-28 12:56:01 [INFO] Connected clients: 0
+2025-04-28 12:56:11 [INFO] Client 2 connected from 127.0.0.1:5000
+2025-04-28 12:56:11 [INFO] New client connected with ID: 2
+2025-04-28 12:56:11 [ERROR] Exception handling message from client 2: resource deadlock would occur: resource deadlock would occur
+2025-04-28 12:56:11 [INFO] Connected clients: 1
+2025-04-28 12:56:11 [INFO] Client 2 [Player_2] from 127.0.0.1 - Ping: 0ms - Packet Loss: 0
+2025-04-28 12:56:17 [WARNING] Client 2 timed out
+2025-04-28 12:56:17 [INFO] Client 2 disconnected
+2025-04-28 12:56:21 [INFO] Connected clients: 0
+2025-04-28 12:56:31 [INFO] Connected clients: 0
+2025-04-28 12:57:06 [INFO] KatieServer starting up...
+2025-04-28 12:57:06 [INFO] Game server initialized with 10 planets
+2025-04-28 12:57:06 [INFO] Server started on port 5000
+2025-04-28 12:57:06 [INFO] Local IP address: 172.20.10.6
+2025-04-28 12:57:06 [INFO] Public IP address: 174.90.223.9
+2025-04-28 12:57:06 [INFO] Server started successfully!
+2025-04-28 12:57:14 [INFO] Client 1 connected from 127.0.0.1:5000
+2025-04-28 12:57:14 [INFO] New client connected with ID: 1
+2025-04-28 12:57:14 [ERROR] Exception handling message from client 1: resource deadlock would occur: resource deadlock would occur
+2025-04-28 12:57:16 [INFO] Connected clients: 1
+2025-04-28 12:57:16 [INFO] Client 1 [Player_1] from 127.0.0.1 - Ping: 0ms - Packet Loss: 0
+2025-04-28 12:57:20 [WARNING] Client 1 timed out
+2025-04-28 12:57:20 [INFO] Client 1 disconnected
+2025-04-28 12:57:26 [INFO] Connected clients: 0
+2025-04-28 12:57:36 [INFO] Connected clients: 0
+2025-04-28 12:57:46 [INFO] Connected clients: 0
+2025-04-28 12:57:56 [INFO] Connected clients: 0
+2025-04-28 12:58:06 [INFO] Connected clients: 0
+2025-04-28 12:58:16 [INFO] Connected clients: 0
+2025-04-28 12:58:26 [INFO] Connected clients: 0
+2025-04-28 12:58:36 [INFO] Connected clients: 0
