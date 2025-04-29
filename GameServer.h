@@ -34,8 +34,16 @@ public:
     void handlePlayerDisconnect(int playerId);
     GameState getGameState();
 
-    void addPlayer(int playerId);
+    void addPlayer(int playerId, sf::Vector2f initialPos = sf::Vector2f(0, 0), sf::Color color = sf::Color::White);
     void removePlayer(int playerId);
+
+    // For network manager to access
+    const std::vector<Planet*>& getPlanets() const { return planets; }
+    const std::map<int, Rocket*>& getRockets() const { return rockets; }
+    Rocket* getRocket(int playerId) {
+        auto it = rockets.find(playerId);
+        return (it != rockets.end()) ? it->second : nullptr;
+    }
 
 private:
     void createSolarSystem();

@@ -1,7 +1,5 @@
 // ClientManager.h
 #pragma once
-#include <SFML/Network.hpp>
-#include <vector>
 #include <map>
 #include <mutex>
 #include "ClientData.h"
@@ -20,7 +18,8 @@ public:
     ClientManager(ServerLogger& logger, ServerConfig& config);
     ~ClientManager();
 
-    int addClient(sf::TcpSocket* socket);
+    // Modified to accept an explicit clientId
+    int addClient(sf::TcpSocket* socket, int clientId = -1);  // Make sure this matches implementation!
     void removeClient(int clientId);
     void checkTimeouts();
     void sendToAll(sf::Packet& packet);

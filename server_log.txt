@@ -91,3 +91,320 @@
 2025-04-28 12:58:16 [INFO] Connected clients: 0
 2025-04-28 12:58:26 [INFO] Connected clients: 0
 2025-04-28 12:58:36 [INFO] Connected clients: 0
+2025-04-28 19:40:35 [INFO] KatieServer starting up...
+2025-04-28 19:40:35 [INFO] Game server initialized with 10 planets
+2025-04-28 19:40:35 [INFO] Server started on port 5000
+2025-04-28 19:40:35 [INFO] Local IP address: 172.20.10.6
+2025-04-28 19:40:36 [INFO] Public IP address: 174.90.223.9
+2025-04-28 19:40:36 [INFO] Server started successfully!
+2025-04-28 19:40:46 [INFO] Connected clients: 0
+2025-04-28 19:40:56 [INFO] Connected clients: 0
+2025-04-28 19:41:05 [INFO] Client 1 connected from 127.0.0.1:5000
+2025-04-28 19:41:05 [INFO] New client connected with ID: 1
+2025-04-28 19:41:05 [ERROR] Exception handling message from client 1: resource deadlock would occur: resource deadlock would occur
+2025-04-28 19:41:06 [INFO] Connected clients: 1
+2025-04-28 19:41:06 [INFO] Client 1 [Player_1] from 127.0.0.1 - Ping: 0ms - Packet Loss: 0
+2025-04-28 19:41:11 [WARNING] Client 1 timed out
+2025-04-28 19:41:11 [INFO] Client 1 disconnected
+2025-04-28 19:41:16 [INFO] Connected clients: 0
+2025-04-28 19:41:26 [INFO] Connected clients: 0
+2025-04-28 19:41:36 [INFO] Connected clients: 0
+2025-04-28 19:41:46 [INFO] Connected clients: 0
+2025-04-28 19:41:56 [INFO] Connected clients: 0
+2025-04-28 19:42:06 [INFO] Connected clients: 0
+2025-04-28 19:42:16 [INFO] Connected clients: 0
+2025-04-28 19:42:26 [INFO] Connected clients: 0
+2025-04-28 19:42:36 [INFO] Connected clients: 0
+2025-04-28 19:42:46 [INFO] Connected clients: 0
+2025-04-28 19:42:56 [INFO] Connected clients: 0
+2025-04-28 19:43:06 [INFO] Connected clients: 0
+2025-04-28 19:43:16 [INFO] Connected clients: 0
+2025-04-28 19:43:26 [INFO] Connected clients: 0
+2025-04-28 19:43:36 [INFO] Connected clients: 0
+2025-04-28 19:43:46 [INFO] Connected clients: 0
+2025-04-28 19:43:56 [INFO] Connected clients: 0
+2025-04-28 19:44:06 [INFO] Connected clients: 0
+2025-04-28 19:44:16 [INFO] Connected clients: 0
+2025-04-28 19:44:26 [INFO] Connected clients: 0
+2025-04-28 19:44:36 [INFO] Connected clients: 0
+2025-04-28 19:44:46 [INFO] Connected clients: 0
+2025-04-28 19:44:56 [INFO] Connected clients: 0
+2025-04-28 19:45:06 [INFO] Connected clients: 0
+2025-04-28 19:45:16 [INFO] Connected clients: 0
+2025-04-28 19:45:26 [INFO] Connected clients: 0
+2025-04-28 19:45:36 [INFO] Connected clients: 0
+2025-04-28 19:45:46 [INFO] Connected clients: 0
+2025-04-28 19:45:56 [INFO] Connected clients: 0
+2025-04-28 19:46:06 [INFO] Connected clients: 0
+2025-04-28 19:46:16 [INFO] Connected clients: 0
+2025-04-28 19:46:26 [INFO] Connected clients: 0
+2025-04-28 19:46:36 [INFO] Connected clients: 0
+2025-04-28 19:46:46 [INFO] Connected clients: 0
+2025-04-28 19:46:56 [INFO] Connected clients: 0
+2025-04-28 19:47:06 [INFO] Connected clients: 0
+2025-04-28 19:47:16 [INFO] Connected clients: 0
+2025-04-28 19:47:26 [INFO] Connected clients: 0
+2025-04-28 19:47:36 [INFO] Connected clients: 0
+2025-04-28 19:47:46 [INFO] Connected clients: 0
+2025-04-28 19:47:56 [INFO] Connected clients: 0
+2025-04-28 19:48:06 [INFO] Connected clients: 0
+2025-04-28 19:48:16 [INFO] Connected clients: 0
+2025-04-28 19:48:26 [INFO] Connected clients: 0
+2025-04-28 19:48:36 [INFO] Connected clients: 0
+2025-04-28 19:48:46 [INFO] Connected clients: 0
+2025-04-28 19:48:56 [INFO] Connected clients: 0
+2025-04-28 19:49:06 [INFO] Connected clients: 0
+2025-04-28 19:49:16 [INFO] Connected clients: 0
+2025-04-28 19:49:26 [INFO] Connected clients: 0
+2025-04-28 19:49:36 [INFO] Connected clients: 0
+2025-04-28 19:49:46 [INFO] Connected clients: 0
+2025-04-28 19:49:56 [INFO] Connected clients: 0
+2025-04-28 19:50:06 [INFO] Connected clients: 0
+2025-04-28 19:50:16 [INFO] Connected clients: 0
+2025-04-28 19:50:26 [INFO] Connected clients: 0
+2025-04-28 19:50:36 [INFO] Connected clients: 0
+2025-04-28 19:50:47 [INFO] Connected clients: 0
+2025-04-28 19:50:57 [INFO] Connected clients: 0
+2025-04-28 19:51:07 [INFO] Connected clients: 0
+2025-04-28 19:51:17 [INFO] Connected clients: 0
+2025-04-28 19:51:27 [INFO] Connected clients: 0
+2025-04-28 19:51:37 [INFO] Connected clients: 0
+2025-04-28 19:51:47 [INFO] Connected clients: 0
+2025-04-28 19:51:57 [INFO] Connected clients: 0
+2025-04-28 19:52:07 [INFO] Connected clients: 0
+2025-04-28 19:52:17 [INFO] Connected clients: 0
+2025-04-28 19:52:27 [INFO] Connected clients: 0
+2025-04-28 19:52:37 [INFO] Connected clients: 0
+2025-04-28 19:52:47 [INFO] Connected clients: 0
+2025-04-28 19:52:57 [INFO] Connected clients: 0
+2025-04-28 19:53:07 [INFO] Connected clients: 0
+2025-04-28 19:53:17 [INFO] Connected clients: 0
+2025-04-28 19:53:27 [INFO] Connected clients: 0
+2025-04-28 19:53:37 [INFO] Connected clients: 0
+2025-04-28 19:53:47 [INFO] Connected clients: 0
+2025-04-28 19:53:57 [INFO] Connected clients: 0
+2025-04-28 19:54:07 [INFO] Connected clients: 0
+2025-04-28 19:54:17 [INFO] Connected clients: 0
+2025-04-28 19:54:27 [INFO] Connected clients: 0
+2025-04-28 19:54:37 [INFO] Connected clients: 0
+2025-04-28 19:54:47 [INFO] Connected clients: 0
+2025-04-28 19:54:57 [INFO] Connected clients: 0
+2025-04-28 19:55:07 [INFO] Connected clients: 0
+2025-04-28 19:55:17 [INFO] Connected clients: 0
+2025-04-28 19:55:27 [INFO] Connected clients: 0
+2025-04-28 19:55:37 [INFO] Connected clients: 0
+2025-04-28 19:55:47 [INFO] Connected clients: 0
+2025-04-28 19:55:57 [INFO] Connected clients: 0
+2025-04-28 19:56:07 [INFO] Connected clients: 0
+2025-04-28 19:56:17 [INFO] Connected clients: 0
+2025-04-28 19:56:27 [INFO] Connected clients: 0
+2025-04-28 19:56:37 [INFO] Connected clients: 0
+2025-04-28 19:56:47 [INFO] Connected clients: 0
+2025-04-28 19:56:57 [INFO] Connected clients: 0
+2025-04-28 19:57:07 [INFO] Connected clients: 0
+2025-04-28 19:57:17 [INFO] Connected clients: 0
+2025-04-28 19:57:27 [INFO] Connected clients: 0
+2025-04-28 19:57:37 [INFO] Connected clients: 0
+2025-04-28 19:57:47 [INFO] Connected clients: 0
+2025-04-28 19:57:57 [INFO] Connected clients: 0
+2025-04-28 19:58:07 [INFO] Connected clients: 0
+2025-04-28 19:58:17 [INFO] Connected clients: 0
+2025-04-28 19:58:27 [INFO] Connected clients: 0
+2025-04-28 19:58:37 [INFO] Connected clients: 0
+2025-04-28 19:58:47 [INFO] Connected clients: 0
+2025-04-28 19:58:57 [INFO] Connected clients: 0
+2025-04-28 19:59:07 [INFO] Connected clients: 0
+2025-04-28 19:59:17 [INFO] Connected clients: 0
+2025-04-28 19:59:27 [INFO] Connected clients: 0
+2025-04-28 19:59:37 [INFO] Connected clients: 0
+2025-04-28 19:59:47 [INFO] Connected clients: 0
+2025-04-28 19:59:57 [INFO] Connected clients: 0
+2025-04-28 20:00:07 [INFO] Connected clients: 0
+2025-04-28 20:00:17 [INFO] Connected clients: 0
+2025-04-28 20:00:27 [INFO] Connected clients: 0
+2025-04-28 20:00:37 [INFO] Connected clients: 0
+2025-04-28 20:00:47 [INFO] Connected clients: 0
+2025-04-28 20:00:57 [INFO] Connected clients: 0
+2025-04-28 20:01:07 [INFO] Connected clients: 0
+2025-04-28 20:01:17 [INFO] Connected clients: 0
+2025-04-28 20:01:27 [INFO] Connected clients: 0
+2025-04-28 20:01:37 [INFO] Connected clients: 0
+2025-04-28 20:01:47 [INFO] Connected clients: 0
+2025-04-28 20:01:57 [INFO] Connected clients: 0
+2025-04-28 20:02:07 [INFO] Connected clients: 0
+2025-04-28 20:02:17 [INFO] Connected clients: 0
+2025-04-28 20:02:27 [INFO] Connected clients: 0
+2025-04-28 20:02:37 [INFO] Connected clients: 0
+2025-04-28 20:02:47 [INFO] Connected clients: 0
+2025-04-28 20:02:57 [INFO] Connected clients: 0
+2025-04-28 20:03:07 [INFO] Connected clients: 0
+2025-04-28 20:03:17 [INFO] Connected clients: 0
+2025-04-28 20:03:27 [INFO] Connected clients: 0
+2025-04-28 20:03:37 [INFO] Connected clients: 0
+2025-04-28 20:03:47 [INFO] Connected clients: 0
+2025-04-28 20:03:57 [INFO] Connected clients: 0
+2025-04-28 20:04:07 [INFO] Connected clients: 0
+2025-04-28 20:04:17 [INFO] Connected clients: 0
+2025-04-28 20:04:27 [INFO] Connected clients: 0
+2025-04-28 20:04:37 [INFO] Connected clients: 0
+2025-04-28 20:04:47 [INFO] Connected clients: 0
+2025-04-28 20:04:57 [INFO] Connected clients: 0
+2025-04-28 20:05:07 [INFO] Connected clients: 0
+2025-04-28 20:05:17 [INFO] Connected clients: 0
+2025-04-28 20:05:27 [INFO] Connected clients: 0
+2025-04-28 20:05:37 [INFO] Connected clients: 0
+2025-04-28 20:05:47 [INFO] Connected clients: 0
+2025-04-28 20:05:57 [INFO] Connected clients: 0
+2025-04-28 20:06:07 [INFO] Connected clients: 0
+2025-04-28 20:06:17 [INFO] Connected clients: 0
+2025-04-28 20:06:27 [INFO] Connected clients: 0
+2025-04-28 20:06:37 [INFO] Connected clients: 0
+2025-04-28 20:06:47 [INFO] Connected clients: 0
+2025-04-28 20:06:57 [INFO] Connected clients: 0
+2025-04-28 20:07:07 [INFO] Connected clients: 0
+2025-04-28 20:07:17 [INFO] Connected clients: 0
+2025-04-28 20:07:27 [INFO] Connected clients: 0
+2025-04-28 20:07:37 [INFO] Connected clients: 0
+2025-04-28 20:07:47 [INFO] Connected clients: 0
+2025-04-28 20:07:57 [INFO] Connected clients: 0
+2025-04-28 20:08:07 [INFO] Connected clients: 0
+2025-04-28 20:08:17 [INFO] Connected clients: 0
+2025-04-28 20:08:27 [INFO] Connected clients: 0
+2025-04-28 20:08:37 [INFO] Connected clients: 0
+2025-04-28 20:08:47 [INFO] Connected clients: 0
+2025-04-28 20:08:57 [INFO] Connected clients: 0
+2025-04-28 20:09:08 [INFO] Connected clients: 0
+2025-04-28 20:09:18 [INFO] Connected clients: 0
+2025-04-28 20:09:28 [INFO] Connected clients: 0
+2025-04-28 20:09:38 [INFO] Connected clients: 0
+2025-04-28 20:09:48 [INFO] Connected clients: 0
+2025-04-28 20:09:58 [INFO] Connected clients: 0
+2025-04-28 20:10:08 [INFO] Connected clients: 0
+2025-04-28 20:10:18 [INFO] Connected clients: 0
+2025-04-28 20:10:28 [INFO] Connected clients: 0
+2025-04-28 20:10:38 [INFO] Connected clients: 0
+2025-04-28 20:10:48 [INFO] Connected clients: 0
+2025-04-28 20:10:58 [INFO] Connected clients: 0
+2025-04-28 20:11:08 [INFO] Connected clients: 0
+2025-04-28 20:11:18 [INFO] Connected clients: 0
+2025-04-28 20:11:28 [INFO] Connected clients: 0
+2025-04-28 20:11:38 [INFO] Connected clients: 0
+2025-04-28 20:11:48 [INFO] Connected clients: 0
+2025-04-28 20:11:58 [INFO] Connected clients: 0
+2025-04-28 20:12:08 [INFO] Connected clients: 0
+2025-04-28 20:12:18 [INFO] Connected clients: 0
+2025-04-28 20:12:28 [INFO] Connected clients: 0
+2025-04-28 20:12:38 [INFO] Connected clients: 0
+2025-04-28 20:12:48 [INFO] Connected clients: 0
+2025-04-28 20:12:58 [INFO] Connected clients: 0
+2025-04-28 20:13:08 [INFO] Connected clients: 0
+2025-04-28 20:13:18 [INFO] Connected clients: 0
+2025-04-28 20:13:28 [INFO] Connected clients: 0
+2025-04-28 20:13:38 [INFO] Connected clients: 0
+2025-04-28 20:13:48 [INFO] Connected clients: 0
+2025-04-28 20:13:58 [INFO] Connected clients: 0
+2025-04-28 20:14:08 [INFO] Connected clients: 0
+2025-04-28 20:14:18 [INFO] Connected clients: 0
+2025-04-28 20:14:28 [INFO] Connected clients: 0
+2025-04-28 20:14:38 [INFO] Connected clients: 0
+2025-04-28 20:14:48 [INFO] Connected clients: 0
+2025-04-28 20:14:58 [INFO] Connected clients: 0
+2025-04-28 20:15:08 [INFO] Connected clients: 0
+2025-04-28 20:15:18 [INFO] Connected clients: 0
+2025-04-28 20:15:28 [INFO] Connected clients: 0
+2025-04-28 20:15:38 [INFO] Connected clients: 0
+2025-04-28 20:15:48 [INFO] Connected clients: 0
+2025-04-28 20:15:58 [INFO] Connected clients: 0
+2025-04-28 20:16:08 [INFO] Connected clients: 0
+2025-04-28 20:16:18 [INFO] Connected clients: 0
+2025-04-28 20:16:28 [INFO] Connected clients: 0
+2025-04-28 20:16:38 [INFO] Connected clients: 0
+2025-04-28 20:16:48 [INFO] Connected clients: 0
+2025-04-28 20:16:58 [INFO] Connected clients: 0
+2025-04-28 20:17:08 [INFO] Connected clients: 0
+2025-04-28 20:17:18 [INFO] Connected clients: 0
+2025-04-28 20:17:28 [INFO] Connected clients: 0
+2025-04-28 20:17:38 [INFO] Connected clients: 0
+2025-04-28 20:17:48 [INFO] Connected clients: 0
+2025-04-28 20:17:58 [INFO] Connected clients: 0
+2025-04-28 20:18:08 [INFO] Connected clients: 0
+2025-04-28 20:18:18 [INFO] Connected clients: 0
+2025-04-28 20:18:28 [INFO] Connected clients: 0
+2025-04-28 20:18:38 [INFO] Connected clients: 0
+2025-04-28 20:18:48 [INFO] Connected clients: 0
+2025-04-28 20:18:58 [INFO] Connected clients: 0
+2025-04-28 20:19:08 [INFO] Connected clients: 0
+2025-04-28 20:19:18 [INFO] Connected clients: 0
+2025-04-28 20:19:28 [INFO] Connected clients: 0
+2025-04-28 20:19:38 [INFO] Connected clients: 0
+2025-04-28 20:19:48 [INFO] Connected clients: 0
+2025-04-28 20:19:58 [INFO] Connected clients: 0
+2025-04-28 20:20:08 [INFO] Connected clients: 0
+2025-04-28 20:20:18 [INFO] Connected clients: 0
+2025-04-28 20:20:28 [INFO] Connected clients: 0
+2025-04-28 20:20:38 [INFO] Connected clients: 0
+2025-04-28 20:20:48 [INFO] Connected clients: 0
+2025-04-28 20:20:58 [INFO] Connected clients: 0
+2025-04-28 20:21:08 [INFO] Connected clients: 0
+2025-04-28 20:21:18 [INFO] Connected clients: 0
+2025-04-28 20:21:28 [INFO] Connected clients: 0
+2025-04-28 20:21:38 [INFO] Connected clients: 0
+2025-04-28 20:21:48 [INFO] Connected clients: 0
+2025-04-28 20:21:58 [INFO] Connected clients: 0
+2025-04-28 20:22:08 [INFO] Connected clients: 0
+2025-04-28 20:22:18 [INFO] Connected clients: 0
+2025-04-28 20:22:28 [INFO] Connected clients: 0
+2025-04-28 20:22:38 [INFO] Connected clients: 0
+2025-04-28 20:22:48 [INFO] Connected clients: 0
+2025-04-28 20:22:58 [INFO] Connected clients: 0
+2025-04-28 20:23:08 [INFO] Connected clients: 0
+2025-04-28 20:23:18 [INFO] Connected clients: 0
+2025-04-28 20:23:28 [INFO] Connected clients: 0
+2025-04-28 20:23:38 [INFO] Connected clients: 0
+2025-04-28 20:23:48 [INFO] Connected clients: 0
+2025-04-28 20:23:58 [INFO] Connected clients: 0
+2025-04-28 20:24:08 [INFO] Connected clients: 0
+2025-04-28 20:24:18 [INFO] Connected clients: 0
+2025-04-29 08:58:17 [INFO] KatieServer starting up...
+2025-04-29 08:58:17 [INFO] Added player 0 at position (1864.56, 300)
+2025-04-29 08:58:17 [INFO] Added player 1 at position (1435.6, 1335.6)
+2025-04-29 08:58:17 [INFO] Added player 2 at position (400.002, 1764.56)
+2025-04-29 08:58:17 [INFO] Added player 3 at position (-635.597, 1335.6)
+2025-04-29 08:58:17 [INFO] Added player 4 at position (-1064.56, 300.003)
+2025-04-29 08:58:17 [INFO] Added player 5 at position (-635.601, -735.595)
+2025-04-29 08:58:17 [INFO] Added player 6 at position (399.995, -1164.56)
+2025-04-29 08:58:17 [INFO] Added player 7 at position (1435.59, -735.603)
+2025-04-29 08:58:17 [INFO] Server started on port 5000
+2025-04-29 08:58:17 [INFO] Local IP address: 172.20.10.6
+2025-04-29 08:58:17 [INFO] Public IP address: 174.90.223.129
+2025-04-29 08:58:17 [INFO] Server started successfully!
+2025-04-29 08:58:27 [INFO] Connected clients: 0
+2025-04-29 08:58:37 [INFO] Connected clients: 0
+2025-04-29 08:58:41 [INFO] Client 1 connected from 127.0.0.1:5000
+2025-04-29 08:58:41 [INFO] New client connected with ID: 1
+2025-04-29 08:58:41 [INFO] Client 1 assigned to pre-existing rocket
+2025-04-29 08:58:42 [INFO] Removed player 1
+2025-04-29 08:58:42 [INFO] Client 1 disconnected
+2025-04-29 08:58:47 [INFO] Connected clients: 0
+2025-04-29 08:58:57 [INFO] Connected clients: 0
+2025-04-29 08:59:35 [INFO] KatieServer starting up...
+2025-04-29 08:59:35 [INFO] Added player 0 at position (1864.56, 300)
+2025-04-29 08:59:35 [INFO] Added player 1 at position (1435.6, 1335.6)
+2025-04-29 08:59:36 [INFO] Added player 2 at position (400.002, 1764.56)
+2025-04-29 08:59:36 [INFO] Added player 3 at position (-635.597, 1335.6)
+2025-04-29 08:59:36 [INFO] Added player 4 at position (-1064.56, 300.003)
+2025-04-29 08:59:36 [INFO] Added player 5 at position (-635.601, -735.595)
+2025-04-29 08:59:36 [INFO] Added player 6 at position (399.995, -1164.56)
+2025-04-29 08:59:36 [INFO] Added player 7 at position (1435.59, -735.603)
+2025-04-29 08:59:36 [INFO] Server started on port 5000
+2025-04-29 08:59:36 [INFO] Local IP address: 172.20.10.6
+2025-04-29 08:59:36 [INFO] Public IP address: 174.90.223.129
+2025-04-29 08:59:36 [INFO] Server started successfully!
+2025-04-29 08:59:46 [INFO] Connected clients: 0
+2025-04-29 08:59:54 [INFO] Client 1 connected from 127.0.0.1:5000
+2025-04-29 08:59:54 [INFO] New client connected with ID: 1
+2025-04-29 08:59:54 [INFO] Client 1 assigned to pre-existing rocket
+2025-04-29 08:59:56 [INFO] Connected clients: 1
+2025-04-29 08:59:56 [INFO] Client 1 [Player_1] from 127.0.0.1 - Ping: 0ms - Packet Loss: 0
+2025-04-29 09:00:00 [WARNING] Client 1 timed out
+2025-04-29 09:00:00 [INFO] Client 1 disconnected

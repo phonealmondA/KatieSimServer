@@ -19,7 +19,8 @@ struct ClientData {
     ClientData(int id, sf::TcpSocket* sock)
         : clientId(id),
         socket(sock),
-        address(sf::IpAddress::LocalHost), // Initialize with LocalHost by default
+        // Use the factory method in SFML 3.0
+        address(sock&& sock->getRemoteAddress() ? *sock->getRemoteAddress() : sf::IpAddress::Any),
         port(0),
         lastActivity(std::chrono::steady_clock::now()),
         authenticated(false),
@@ -28,22 +29,12 @@ struct ClientData {
         packetLoss(0),
         pendingDisconnect(false)
     {
-        // Update the address if we can get it from the socket
-        if (sock && sock->getRemoteAddress()) {
-            address = *sock->getRemoteAddress();
-        }
     }
 
     ~ClientData() {
-        try {
-            if (socket) {
-                socket->disconnect();
-                delete socket;
-                socket = nullptr;
-            }
-        }
-        catch (...) {
-            // Just ensure the socket is marked null even if disconnection fails
+        if (socket) {
+            socket->disconnect();
+            delete socket;
             socket = nullptr;
         }
     }

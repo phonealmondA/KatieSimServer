@@ -4,7 +4,7 @@
 #include <mutex>
 #include <thread>
 #include <atomic>
-#include <functional>  // Add this for std::function
+#include <functional>
 #include "ClientManager.h"
 #include "ServerLogger.h"
 #include "ServerConfig.h"
@@ -48,6 +48,9 @@ public:
     void setPlayerInputCallback(std::function<void(int clientId, const PlayerInput&)> callback);
     void setClientAuthenticatedCallback(std::function<void(int clientId, const std::string&)> callback);
     void setClientDisconnectedCallback(std::function<void(int clientId)> callback);
+
+    // Helper method to find next available player ID
+    int findNextAvailablePlayerId();
 
 private:
     void acceptClientConnections();

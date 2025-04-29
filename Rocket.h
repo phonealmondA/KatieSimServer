@@ -2,6 +2,7 @@
 #pragma once
 #include "GameObject.h"
 #include <vector>
+#include <SFML/Graphics/Color.hpp>
 
 class Rocket : public GameObject {
 private:
@@ -9,12 +10,12 @@ private:
     float angularVelocity;
     float thrustLevel;
     float mass;
-    uint8_t colorR, colorG, colorB;
+    sf::Color color;  // Changed to sf::Color
     int playerId;
 
 public:
     Rocket(sf::Vector2f pos, sf::Vector2f vel, int playerId, float mass = 1.0f,
-        uint8_t r = 255, uint8_t g = 255, uint8_t b = 255);
+        sf::Color color = sf::Color::White);  // Changed to use sf::Color
 
     void applyThrust(float amount);
     void rotate(float amount);
@@ -27,6 +28,6 @@ public:
     float getMass() const;
     void setMass(float newMass);
     int getPlayerId() const;
-    void getColor(uint8_t& r, uint8_t& g, uint8_t& b) const;
-    void setColor(uint8_t r, uint8_t g, uint8_t b);
+    sf::Color getColor() const;  // Changed to return sf::Color
+    void setColor(sf::Color newColor);  // Changed to accept sf::Color
 };

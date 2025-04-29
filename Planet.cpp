@@ -3,8 +3,8 @@
 #include "GameConstants.h"
 #include <cmath>
 
-Planet::Planet(sf::Vector2f pos, float radius, float mass, uint8_t r, uint8_t g, uint8_t b)
-    : GameObject(pos, { 0, 0 }), mass(mass), colorR(r), colorG(g), colorB(b)
+Planet::Planet(sf::Vector2f pos, float radius, float mass, sf::Color color)
+    : GameObject(pos, { 0, 0 }), mass(mass), color(color)
 {
     // If a specific radius was provided, use it
     if (radius > 0) {
@@ -44,11 +44,9 @@ void Planet::updateRadiusFromMass()
         std::pow(mass / GameConstants::REFERENCE_MASS, 1.0f / 3.0f);
 }
 
-void Planet::getColor(uint8_t& r, uint8_t& g, uint8_t& b) const
+sf::Color Planet::getColor() const
 {
-    r = colorR;
-    g = colorG;
-    b = colorB;
+    return color;
 }
 
 void Planet::setPosition(sf::Vector2f pos)

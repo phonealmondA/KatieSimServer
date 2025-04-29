@@ -4,11 +4,10 @@
 #include "GameConstants.h"
 #include <cmath>
 
-Rocket::Rocket(sf::Vector2f pos, sf::Vector2f vel, int playerId, float mass,
-    uint8_t r, uint8_t g, uint8_t b)
+Rocket::Rocket(sf::Vector2f pos, sf::Vector2f vel, int playerId, float mass, sf::Color color)
     : GameObject(pos, vel),
     rotation(0), angularVelocity(0), thrustLevel(0.0f),
-    mass(mass), colorR(r), colorG(g), colorB(b), playerId(playerId)
+    mass(mass), color(color), playerId(playerId)
 {
 }
 
@@ -75,16 +74,12 @@ int Rocket::getPlayerId() const
     return playerId;
 }
 
-void Rocket::getColor(uint8_t& r, uint8_t& g, uint8_t& b) const
+sf::Color Rocket::getColor() const
 {
-    r = colorR;
-    g = colorG;
-    b = colorB;
+    return color;
 }
 
-void Rocket::setColor(uint8_t r, uint8_t g, uint8_t b)
+void Rocket::setColor(sf::Color newColor)
 {
-    colorR = r;
-    colorG = g;
-    colorB = b;
+    color = newColor;
 }

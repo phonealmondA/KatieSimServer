@@ -176,6 +176,25 @@ void NetworkManager::setClientDisconnectedCallback(std::function<void(int client
     this->onClientDisconnected = callback;
 }
 
+int NetworkManager::findNextAvailablePlayerId() {
+    // Get current client IDs
+    std::vector<int> currentIds = clientManager.getClientIds();
+
+    // Start from player ID 1 (0 is reserved for host)
+    for (int id = 1; id < 8; id++) {
+        bool idTaken = false;
+        for (int existingId : currentIds) {
+            if (existingId == id) {
+                idTaken = true;
+                break;
+            }
+        }
+        if (!idTaken) return id;
+    }
+
+    // If all IDs are taken, return a high number
+    return 99;
+}
 void NetworkManager::acceptClientConnections()
 {
     while (running.load()) {
@@ -187,15 +206,21 @@ void NetworkManager::acceptClientConnections()
             if (status == sf::Socket::Status::Done) {
                 newClient->setBlocking(false);
 
-                // Add client to manager
-                int clientId = clientManager.addClient(newClient);
+                // Get the next available player ID
+                int clientId = findNextAvailablePlayerId();
 
-                // Send player ID to client
+                // Add client to manager - make sure to match the method signature!
+                clientId = clientManager.addClient(newClient, clientId);
+
+                // Send player ID to client - this lets them know which pre-created rocket to use
                 sendPlayerIdentity(clientId);
 
                 std::stringstream ss;
                 ss << "New client connected with ID: " << clientId;
                 logger.info(ss.str());
+
+                // No need to create a new player - just use the pre-created one with this ID
+                logger.info("Client " + std::to_string(clientId) + " assigned to pre-existing rocket");
             }
             else {
                 // No new connection, sleep a bit to avoid CPU hogging
@@ -214,7 +239,6 @@ void NetworkManager::acceptClientConnections()
         }
     }
 }
-
 void NetworkManager::receiveClientMessages()
 {
     while (running.load()) {

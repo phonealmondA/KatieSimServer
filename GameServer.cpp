@@ -3,6 +3,7 @@
 #include "GameConstants.h"
 #include <sstream>
 #include <cmath>
+#include <iostream>
 
 GameServer::GameServer(ServerLogger& logger, ServerConfig& config)
     : sequenceNumber(0), gameTime(0.0f), logger(logger), config(config)
@@ -26,17 +27,90 @@ GameServer::~GameServer()
 
 void GameServer::initialize()
 {
-    // Create solar system
-    createSolarSystem();
+    // Create main planet (sun)
+    Planet* mainPlanet = new Planet(
+        sf::Vector2f(GameConstants::MAIN_PLANET_X, GameConstants::MAIN_PLANET_Y),
+        0, GameConstants::MAIN_PLANET_MASS, sf::Color::Yellow);
+    mainPlanet->setVelocity(sf::Vector2f(0.f, 0.f));
+    planets.push_back(mainPlanet);
 
-    // Initialize simulator
+    // Create orbit planets with different orbital distances and sizes
+    const float basePlanetMass = GameConstants::SECONDARY_PLANET_MASS;
+
+    // Planet colors
+    const sf::Color planetColors[] = {
+        sf::Color(150, 150, 150),  // Mercury (gray)
+        sf::Color(255, 190, 120),  // Venus (light orange)
+        sf::Color(0, 100, 255),    // Earth (blue)
+        sf::Color(255, 100, 0),    // Mars (red)
+        sf::Color(255, 200, 100),  // Jupiter (light orange)
+        sf::Color(230, 180, 80),   // Saturn (tan)
+        sf::Color(180, 230, 230),  // Uranus (light blue)
+        sf::Color(100, 130, 255),  // Neptune (dark blue)
+        sf::Color(230, 230, 230)   // Pluto (light gray)
+    };
+
+    // Distance and mass scaling factors
+    const float distanceScalings[] = { 0.4f, 0.7f, 1.0f, 1.5f, 2.2f, 3.0f, 4.0f, 5.0f, 6.0f };
+    const float massScalings[] = { 0.1f, 0.8f, 1.0f, 0.5f, 11.0f, 9.5f, 4.0f, 3.8f, 0.05f };
+
+    // Create each planet
+    for (int i = 0; i < 9; i++) {
+        float orbitDistance = GameConstants::PLANET_ORBIT_DISTANCE * distanceScalings[i];
+        float angle = (i * 40.0f) * (3.14159f / 180.0f); // Distribute planets around the sun
+
+        // Calculate position based on orbit distance and angle
+        float planetX = mainPlanet->getPosition().x + orbitDistance * cos(angle);
+        float planetY = mainPlanet->getPosition().y + orbitDistance * sin(angle);
+
+        // Calculate orbital velocity for a circular orbit
+        float orbitalVelocity = std::sqrt(GameConstants::G * mainPlanet->getMass() / orbitDistance);
+
+        // Velocity is perpendicular to position vector
+        float velocityX = -sin(angle) * orbitalVelocity;
+        float velocityY = cos(angle) * orbitalVelocity;
+
+        // Create the planet with scaled mass
+        Planet* planet = new Planet(
+            sf::Vector2f(planetX, planetY),
+            0, basePlanetMass * massScalings[i], planetColors[i]);
+
+        planet->setVelocity(sf::Vector2f(velocityX, velocityY));
+        planets.push_back(planet);
+    }
+
+    // Setup gravity simulator
     simulator.setSimulatePlanetGravity(true);
-
-    for (auto& planet : planets) {
+    for (auto planet : planets) {
         simulator.addPlanet(planet);
     }
 
-    logger.info("Game server initialized with " + std::to_string(planets.size()) + " planets");
+    // Create rockets for up to MAX_PLAYERS in advance
+    const int MAX_PLAYERS = 8; // Define maximum number of players
+    for (int playerId = 0; playerId < MAX_PLAYERS; playerId++) {
+        // Get a good spawn position, different for each player
+        sf::Vector2f spawnPos;
+        float spawnAngle = (playerId * 45.0f) * (3.14159f / 180.0f); // Distribute around main planet
+
+        // Base position is 30% further than the first planet's orbit
+        float spawnDistance = GameConstants::PLANET_ORBIT_DISTANCE * 0.4f * 1.3f;
+
+        spawnPos.x = mainPlanet->getPosition().x + spawnDistance * cos(spawnAngle);
+        spawnPos.y = mainPlanet->getPosition().y + spawnDistance * sin(spawnAngle);
+
+        // Generate a unique color based on player ID
+        sf::Color playerColor(
+            100 + (playerId * 50) % 155,
+            100 + (playerId * 30) % 155,
+            100 + (playerId * 70) % 155
+        );
+
+        // Create a rocket for this player
+        addPlayer(playerId, spawnPos, playerColor);
+
+        std::cout << "Pre-created player " << playerId << " at position ("
+            << spawnPos.x << ", " << spawnPos.y << ")" << std::endl;
+    }
 }
 
 void GameServer::update(float deltaTime)
@@ -55,36 +129,32 @@ void GameServer::update(float deltaTime)
 
 void GameServer::handlePlayerInput(int playerId, const PlayerInput& input)
 {
-    std::lock_guard<std::mutex> lock(gameStateMutex);
-
     auto it = rockets.find(playerId);
-
     if (it == rockets.end()) {
-        // Player not found - create a new rocket for this player
-        addPlayer(playerId);
-        it = rockets.find(playerId);
-
-        if (it == rockets.end()) {
-            logger.warning("Failed to create rocket for player " + std::to_string(playerId));
-            return;
-        }
+        std::cerr << "Warning: Received input for non-existent player ID: " << playerId << std::endl;
+        return;
     }
 
+    // Debug output
+    std::cout << "Server applying input to player ID: " << playerId << std::endl;
+
+    // Apply input directly to the rocket
     Rocket* rocket = it->second;
+    if (!rocket) {
+        std::cerr << "Error: Null rocket for player ID: " << playerId << std::endl;
+        return;
+    }
 
     // Apply input to the rocket
     if (input.thrustForward) {
         rocket->applyThrust(input.thrustLevel);
     }
-
     if (input.thrustBackward) {
         rocket->applyThrust(-0.5f);
     }
-
     if (input.rotateLeft) {
         rocket->rotate(-6.0f * input.deltaTime * 60.0f);
     }
-
     if (input.rotateRight) {
         rocket->rotate(6.0f * input.deltaTime * 60.0f);
     }
@@ -120,12 +190,11 @@ GameState GameServer::getGameState()
         rocketState.thrustLevel = rocket->getThrustLevel();
         rocketState.mass = rocket->getMass();
 
-        // Get rocket color
-        uint8_t r, g, b;
-        rocket->getColor(r, g, b);
-        rocketState.colorR = r;
-        rocketState.colorG = g;
-        rocketState.colorB = b;
+        // Get color values individually
+        sf::Color color = rocket->getColor();
+        rocketState.colorR = color.r;
+        rocketState.colorG = color.g;
+        rocketState.colorB = color.b;
 
         state.rockets.push_back(rocketState);
     }
@@ -141,12 +210,11 @@ GameState GameServer::getGameState()
         planetState.mass = planet->getMass();
         planetState.radius = planet->getRadius();
 
-        // Get planet color
-        uint8_t r, g, b;
-        planet->getColor(r, g, b);
-        planetState.colorR = r;
-        planetState.colorG = g;
-        planetState.colorB = b;
+        // Get color values individually
+        sf::Color color = planet->getColor();
+        planetState.colorR = color.r;
+        planetState.colorG = color.g;
+        planetState.colorB = color.b;
 
         state.planets.push_back(planetState);
     }
@@ -154,7 +222,7 @@ GameState GameServer::getGameState()
     return state;
 }
 
-void GameServer::addPlayer(int playerId)
+void GameServer::addPlayer(int playerId, sf::Vector2f initialPos, sf::Color color)
 {
     std::lock_guard<std::mutex> lock(gameStateMutex);
 
@@ -163,23 +231,20 @@ void GameServer::addPlayer(int playerId)
         return;
     }
 
-    // Determine a good spawn position (above the main planet)
-    sf::Vector2f spawnPos;
-    if (!planets.empty()) {
-        spawnPos = planets[0]->getPosition() +
+    // If no position provided, determine a good spawn position (above the main planet)
+    if (initialPos == sf::Vector2f(0, 0) && !planets.empty()) {
+        initialPos = planets[0]->getPosition() +
             sf::Vector2f(0, -(planets[0]->getRadius() + GameConstants::ROCKET_SIZE + 30.0f));
     }
-    else {
-        spawnPos = sf::Vector2f(400.f, 100.f);
+    else if (initialPos == sf::Vector2f(0, 0)) {
+        initialPos = sf::Vector2f(400.f, 100.f);
     }
 
-    // Generate a unique color based on player ID
-    uint8_t r = 100 + (playerId * 50) % 155;
-    uint8_t g = 100 + (playerId * 30) % 155;
-    uint8_t b = 100 + (playerId * 70) % 155;
-
     // Create a new rocket
-    Rocket* rocket = new Rocket(spawnPos, sf::Vector2f(0, 0), playerId, 1.0f, r, g, b);
+    Rocket* rocket = new Rocket(initialPos, sf::Vector2f(0, 0), playerId, 1.0f);
+
+    // Set color directly (not using individual r, g, b components)
+    rocket->setColor(color);
 
     // Add to the simulator
     simulator.addRocket(rocket);
@@ -189,7 +254,7 @@ void GameServer::addPlayer(int playerId)
 
     std::stringstream ss;
     ss << "Added player " << playerId << " at position ("
-        << spawnPos.x << ", " << spawnPos.y << ")";
+        << initialPos.x << ", " << initialPos.y << ")";
     logger.info(ss.str());
 }
 
@@ -217,24 +282,24 @@ void GameServer::createSolarSystem()
     // Create main planet (sun)
     Planet* mainPlanet = new Planet(
         sf::Vector2f(GameConstants::MAIN_PLANET_X, GameConstants::MAIN_PLANET_Y),
-        0, GameConstants::MAIN_PLANET_MASS, 255, 255, 0);  // Yellow
+        0, GameConstants::MAIN_PLANET_MASS, sf::Color(255, 255, 0));  // Yellow
     mainPlanet->setVelocity(sf::Vector2f(0.f, 0.f));
     planets.push_back(mainPlanet);
 
     // Create orbit planets with different orbital distances and sizes
     const float basePlanetMass = GameConstants::SECONDARY_PLANET_MASS;
 
-    // Planet colors
-    const uint8_t planetColors[][3] = {
-        {150, 150, 150},  // Mercury (gray)
-        {255, 190, 120},  // Venus (light orange)
-        {0, 100, 255},    // Earth (blue)
-        {255, 100, 0},    // Mars (red)
-        {255, 200, 100},  // Jupiter (light orange)
-        {230, 180, 80},   // Saturn (tan)
-        {180, 230, 230},  // Uranus (light blue)
-        {100, 130, 255},  // Neptune (dark blue)
-        {230, 230, 230}   // Pluto (light gray)
+    // Planet colors defined using sf::Color
+    const sf::Color planetColors[] = {
+        sf::Color(150, 150, 150),  // Mercury (gray)
+        sf::Color(255, 190, 120),  // Venus (light orange)
+        sf::Color(0, 100, 255),    // Earth (blue)
+        sf::Color(255, 100, 0),    // Mars (red)
+        sf::Color(255, 200, 100),  // Jupiter (light orange)
+        sf::Color(230, 180, 80),   // Saturn (tan)
+        sf::Color(180, 230, 230),  // Uranus (light blue)
+        sf::Color(100, 130, 255),  // Neptune (dark blue)
+        sf::Color(230, 230, 230)   // Pluto (light gray)
     };
 
     // Distance and mass scaling factors
@@ -261,7 +326,7 @@ void GameServer::createSolarSystem()
         Planet* planet = new Planet(
             sf::Vector2f(planetX, planetY),
             0, basePlanetMass * massScalings[i],
-            planetColors[i][0], planetColors[i][1], planetColors[i][2]);
+            planetColors[i]);
 
         planet->setVelocity(sf::Vector2f(velocityX, velocityY));
         planets.push_back(planet);
