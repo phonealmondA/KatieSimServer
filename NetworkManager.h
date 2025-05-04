@@ -10,9 +10,13 @@
 #include "GameState.h"
 #include "PlayerInput.h"
 #include <SFML/Graphics.hpp>
+
 // Forward declarations
 class GameServer;
 class GameClient;
+class ClientManager;
+class ServerLogger;
+class ServerConfig;
 
 // Connection state enum
 enum class ConnectionState {
@@ -46,6 +50,11 @@ private:
     GameServer* g; // gameServer
     GameClient* h; // gameClient
 
+    // Server components
+    ClientManager& p; // clientManager
+    ServerLogger& q; // logger
+    ServerConfig& r; // config
+
     // Network diagnostics
     sf::Clock i; // lastPacketTime
     int j; // packetLossCounter
@@ -59,8 +68,13 @@ private:
     sf::Clock n; // syncClock - tracks time since last sync
     std::map<int, float> o; // clientLastSyncTimes - when each client last sent their simulation
 
+    // Callbacks
+    std::function<void(int clientId, const PlayerInput&)> s; // playerInputCallback
+    std::function<void(int clientId)> t; // clientDisconnectedCallback
+    std::function<void(int clientId, const std::string&)> u; // clientAuthenticatedCallback
+
 public:
-    NetworkManager();
+    NetworkManager(ClientManager& clientManager, ServerLogger& logger, ServerConfig& config);
     ~NetworkManager();
 
     // Set references to game components
@@ -96,4 +110,13 @@ public:
     std::function<void(const GameState&)> onGameStateReceived;
     std::function<void(int clientId, const GameState&)> onClientSimulationReceived;  // New callback
     std::function<void(const GameState&)> onServerValidationReceived;  // New callback
+
+    // New callback methods
+    void setPlayerInputCallback(std::function<void(int clientId, const PlayerInput&)> callback) { s = callback; }
+    void setClientDisconnectedCallback(std::function<void(int clientId)> callback) { t = callback; }
+    void setClientAuthenticatedCallback(std::function<void(int clientId, const std::string&)> callback) { u = callback; }
+
+    // Start/stop methods
+    bool start();
+    void stop();
 };

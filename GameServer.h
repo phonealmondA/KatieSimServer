@@ -8,6 +8,9 @@
 #include <map>
 #include <mutex>
 #include <SFML/Graphics.hpp>
+#include "ServerLogger.h"
+#include "ServerConfig.h"
+
 class GameServer {
 private:
     std::vector<Planet*> a; // planets
@@ -18,6 +21,10 @@ private:
     unsigned long e; // sequenceNumber
     float f; // gameTime
 
+    // Server components
+    ServerLogger& s; // logger
+    ServerConfig& t; // config
+
     // New members for distributed simulation
     std::map<int, GameState> g; // clientSimulations - stores each client's simulation state
     std::map<int, float> h; // lastClientUpdateTime - when each client last sent their simulation
@@ -25,7 +32,7 @@ private:
     float j; // validationThreshold - how much difference is allowed before correcting client
 
 public:
-    GameServer();
+    GameServer(ServerLogger& logger, ServerConfig& config);
     ~GameServer();
 
     void initialize();
@@ -33,6 +40,9 @@ public:
 
     // Handle input from clients
     void handlePlayerInput(int playerId, const PlayerInput& input);
+
+    // Add missing handlePlayerDisconnect method
+    void handlePlayerDisconnect(int clientId);
 
     // New method to process client simulation states
     void processClientSimulation(int playerId, const GameState& clientState);

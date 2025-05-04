@@ -1,13 +1,21 @@
 // NetworkManager.cpp
 #include "NetworkManager.h"
+#include "GameServer.h" // Include directly instead of forward declaration
+#include "GameClient.h" // Include directly instead of forward declaration
+#include "ClientManager.h"
+#include "ServerLogger.h"
+#include "ServerConfig.h"
+#include "GameConstants.h"
 #include <sstream>
 #include <chrono>
 #include <thread>
 #include <iostream>
+#include <algorithm>
 
-NetworkManager::NetworkManager()
+NetworkManager::NetworkManager(ClientManager& clientManager, ServerLogger& logger, ServerConfig& config)
     : a(false), e(0), f(false), g(nullptr), h(nullptr),
-    j(0), k(0), l(ConnectionState::DISCONNECTED), m(0.1f)
+    j(0), k(0), l(ConnectionState::DISCONNECTED), m(0.1f),
+    p(clientManager), q(logger), r(config)
 {
     // Initialize clocks and maps
     i.restart();
@@ -18,6 +26,9 @@ NetworkManager::NetworkManager()
     onGameStateReceived = nullptr;
     onClientSimulationReceived = nullptr;
     onServerValidationReceived = nullptr;
+    s = nullptr;
+    t = nullptr;
+    u = nullptr;
 }
 
 NetworkManager::~NetworkManager()
@@ -261,7 +272,7 @@ void NetworkManager::update()
                     }
 
                     // Create a new player for this client if gameServer exists
-                    if (g && !g->getPlanets().empty()) {
+                    if (g) {
                         const auto& planets = g->getPlanets();
                         if (!planets.empty() && planets[0]) {
                             sf::Vector2f spawnPos = planets[0]->getPosition() +
@@ -274,6 +285,11 @@ void NetworkManager::update()
                     }
 
                     std::cout << "New client connected with ID: " << clientId << std::endl;
+
+                    // Call the authentication callback
+                    if (u) {
+                        u(clientId, "Player_" + std::to_string(clientId));
+                    }
                 }
                 else {
                     // No new connection, clean up allocated socket
@@ -314,6 +330,11 @@ void NetworkManager::update()
                                         if (onPlayerInputReceived) {
                                             onPlayerInputReceived(clientId, input);
                                         }
+
+                                        // Call the callback
+                                        if (s) {
+                                            s(clientId, input);
+                                        }
                                     }
                                     break;
                                 }
@@ -337,6 +358,11 @@ void NetworkManager::update()
                                     if (g) {
                                         g->removePlayer(clientId);
                                     }
+
+                                    // Call the disconnection callback
+                                    if (t) {
+                                        t(clientId);
+                                    }
                                     break;
 
                                 default:
@@ -356,6 +382,11 @@ void NetworkManager::update()
 
                         if (g) {
                             g->removePlayer(clientId);
+                        }
+
+                        // Call the disconnection callback
+                        if (t) {
+                            t(clientId);
                         }
                     }
                 }
@@ -639,4 +670,38 @@ float NetworkManager::getPing() const
 int NetworkManager::getPacketLoss() const
 {
     return j;
+}
+
+bool NetworkManager::start() {
+    try {
+        // Initialize the network components
+        if (a) {
+            // Host mode - start server
+            if (!hostGame(r.getPort())) {
+                q.error("Failed to start server on port " + std::to_string(r.getPort()));
+                return false;
+            }
+        }
+        else {
+            // Client mode not implemented here
+            q.error("Client mode not implemented in start()");
+            return false;
+        }
+
+        return true;
+    }
+    catch (const std::exception& ex) {
+        q.error("Exception in start(): " + std::string(ex.what()));
+        return false;
+    }
+}
+
+void NetworkManager::stop() {
+    try {
+        disconnect();
+        q.info("Network manager stopped");
+    }
+    catch (const std::exception& ex) {
+        q.error("Exception in stop(): " + std::string(ex.what()));
+    }
 }

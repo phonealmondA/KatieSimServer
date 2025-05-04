@@ -7,6 +7,7 @@
 #include <vector>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics.hpp>
+
 class Rocket : public GameObject {
 private:
     float a; // rotation
@@ -29,12 +30,17 @@ public:
     void rotate(float amount);
     void setThrustLevel(float level);
     void update(float deltaTime) override;
+    void draw(sf::RenderWindow& window) override;
     void setNearbyPlanets(const std::vector<Planet*>& planets);
     bool isColliding(const Planet& planet) const;
 
     // State methods
     RocketState createState() const;
     void applyState(const RocketState& state);
+    // Rocket.h (continued)
+    // Added missing methods causing compiler errors
+    void drawWithConstantSize(sf::RenderWindow& window, float zoomLevel);
+    void drawVelocityVector(sf::RenderWindow& window, float scale = 1.0f);
 
     // Getters/setters
     float getRotation() const { return a; }

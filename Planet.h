@@ -2,11 +2,13 @@
 #pragma once
 #include "GameObject.h"
 #include <SFML/Graphics.hpp>
+
 class Planet : public GameObject {
 private:
     float mass;
     float radius;
     int ownerId; // Added owner ID
+    // Color is already in GameObject as it inherits from it
 
 public:
     Planet(sf::Vector2f pos, float radius, float mass, sf::Color color = sf::Color::Blue);

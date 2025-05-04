@@ -4,11 +4,12 @@
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics.hpp>
+
 class GameObject {
 protected:
     sf::Vector2f position;
     sf::Vector2f velocity;
-    sf::Color color;
+    sf::Color color;  // Make sure this is declared here for Planet to inherit
 
 public:
     GameObject(sf::Vector2f pos, sf::Vector2f vel);

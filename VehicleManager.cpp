@@ -9,7 +9,7 @@ VehicleManager::VehicleManager(sf::Vector2f initialPos, const std::vector<Planet
 {
     try {
         // First create rocket and car
-        a = std::make_unique<Rocket>(initialPos, sf::Vector2f(0, 0), sf::Color::White, 1.0f, ownerId);
+        a = std::make_unique<Rocket>(initialPos, sf::Vector2f(0, 0), ownerId, 1.0f, sf::Color::White);
         b = std::make_unique<Car>(initialPos, sf::Vector2f(0, 0));
 
         // Handle planets safely
@@ -32,7 +32,7 @@ VehicleManager::VehicleManager(sf::Vector2f initialPos, const std::vector<Planet
 
         // Make sure objects are created
         try {
-            if (!a) a = std::make_unique<Rocket>(initialPos, sf::Vector2f(0, 0), sf::Color::White, 1.0f, ownerId);
+            if (!a) a = std::make_unique<Rocket>(initialPos, sf::Vector2f(0, 0), ownerId, 1.0f, sf::Color::White);
             if (!b) b = std::make_unique<Car>(initialPos, sf::Vector2f(0, 0));
         }
         catch (const std::exception& ex2) {

@@ -123,3 +123,57 @@ void Rocket::applyState(const RocketState& state)
     e = state.h;
     g = state.i;
 }
+
+// Rocket.cpp (additions)
+// Add the missing method implementations
+void Rocket::drawWithConstantSize(sf::RenderWindow& window, float zoomLevel)
+{
+    if (!window.isOpen()) return;
+
+    try {
+        // Create a simple visualization of the rocket as a triangle
+        sf::ConvexShape scaledShape;
+        scaledShape.setPointCount(3);
+
+        // Define triangle points scaled by zoom level
+        float size = GameConstants::ROCKET_SIZE * zoomLevel;
+        scaledShape.setPoint(0, sf::Vector2f(0, -size));
+        scaledShape.setPoint(1, sf::Vector2f(-size / 2, size));
+        scaledShape.setPoint(2, sf::Vector2f(size / 2, size));
+
+        // Set position and rotation
+        scaledShape.setPosition(position);
+        scaledShape.setRotation(sf::degrees(a));
+        scaledShape.setFillColor(e);
+
+        // Draw the scaled rocket
+        window.draw(scaledShape);
+    }
+    catch (const std::exception& ex) {
+        std::cerr << "Exception in drawWithConstantSize: " << ex.what() << std::endl;
+    }
+}
+
+void Rocket::drawVelocityVector(sf::RenderWindow& window, float scale)
+{
+    if (!window.isOpen()) return;
+
+    try {
+        // Create a line to represent velocity vector
+        sf::VertexArray velocityLine(sf::PrimitiveType::LineStrip, 2);
+
+        // Set starting point at rocket position
+        velocityLine[0].position = position;
+        velocityLine[0].color = sf::Color::Yellow;
+
+        // Set ending point based on velocity and scale
+        velocityLine[1].position = position + velocity * scale;
+        velocityLine[1].color = sf::Color::Green;
+
+        // Draw the velocity vector
+        window.draw(velocityLine);
+    }
+    catch (const std::exception& ex) {
+        std::cerr << "Exception in drawVelocityVector: " << ex.what() << std::endl;
+    }
+}

@@ -3,9 +3,8 @@
 #include "GameConstants.h"
 #include <iostream>
 #include <cmath>
-
-GameServer::GameServer()
-    : e(0), f(0.0f), j(0.1f) // Set validation threshold to 10% difference
+GameServer::GameServer(ServerLogger& logger, ServerConfig& config)
+    : e(0), f(0.0f), j(0.1f), s(logger), t(config) // Add the references to logger and config
 {
     // Constructor implementation
 }
@@ -458,4 +457,13 @@ void GameServer::createSolarSystem()
         planet->setVelocity(sf::Vector2f(velocityX, velocityY));
         a.push_back(planet);
     }
+}
+
+// Add handlePlayerDisconnect implementation
+void GameServer::handlePlayerDisconnect(int clientId) {
+    // Remove the player from the game
+    removePlayer(clientId);
+
+    // Log the disconnection
+    s.info("Player " + std::to_string(clientId) + " disconnected from the game");
 }
