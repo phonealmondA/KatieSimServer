@@ -3,423 +3,640 @@
 #include <sstream>
 #include <chrono>
 #include <thread>
+#include <iostream>
 
-NetworkManager::NetworkManager(ClientManager& clientManager, ServerLogger& logger, ServerConfig& config)
-    : clientManager(clientManager), logger(logger), config(config), running(false)
+NetworkManager::NetworkManager()
+    : a(false), e(0), f(false), g(nullptr), h(nullptr),
+    j(0), k(0), l(ConnectionState::DISCONNECTED), m(0.1f)
 {
-    // Initialize callback functions to nullptr to avoid calling uninitialized functions
+    // Initialize clocks and maps
+    i.restart();
+    n.restart();
+
+    // Initialize callbacks to nullptr
     onPlayerInputReceived = nullptr;
-    onClientAuthenticated = nullptr;
-    onClientDisconnected = nullptr;
+    onGameStateReceived = nullptr;
+    onClientSimulationReceived = nullptr;
+    onServerValidationReceived = nullptr;
 }
 
 NetworkManager::~NetworkManager()
 {
-    stop();
+    try {
+        disconnect();
+    }
+    catch (const std::exception& ex) {
+        std::cerr << "Exception in NetworkManager destructor: " << ex.what() << std::endl;
+    }
+    catch (...) {
+        std::cerr << "Unknown exception in NetworkManager destructor" << std::endl;
+    }
 }
 
-bool NetworkManager::start()
+void NetworkManager::setGameServer(GameServer* server)
 {
-    std::lock_guard<std::mutex> lock(networkMutex);
+    g = server;
+}
 
-    if (running.load()) {
-        logger.warning("Network manager already running");
-        return false;
-    }
+void NetworkManager::setGameClient(GameClient* client)
+{
+    h = client;
+}
 
-    // Start listening for connections
+bool NetworkManager::hostGame(unsigned short port)
+{
     try {
-        if (listener.listen(config.getPort()) != sf::Socket::Status::Done) {
-            std::stringstream ss;
-            ss << "Failed to bind to port " << config.getPort();
-            logger.error(ss.str());
+        e = port;
+        a = true;
+        l = ConnectionState::CONNECTING;
+
+        // Start listening for connections
+        if (d.listen(port) != sf::Socket::Status::Done) {
+            std::cerr << "Failed to bind to port " << port << std::endl;
+            l = ConnectionState::DISCONNECTED;
             return false;
         }
 
-        listener.setBlocking(false);
+        std::cout << "Server started on port " << port << std::endl;
 
-        std::stringstream ss;
-        ss << "Server started on port " << config.getPort();
-        logger.info(ss.str());
-
-        // Log local IP for convenience
-        auto localIpOpt = sf::IpAddress::getLocalAddress();
-        if (localIpOpt) {
-            logger.info("Local IP address: " + localIpOpt->toString());
+        // Log IP addresses
+        auto localIp = sf::IpAddress::getLocalAddress();
+        if (localIp) {
+            std::cout << "Local IP address: " << localIp->toString() << std::endl;
         }
         else {
-            logger.warning("Could not determine local IP address");
+            std::cout << "Could not determine local IP address" << std::endl;
         }
 
         try {
-            auto publicIpOpt = sf::IpAddress::getPublicAddress(sf::seconds(2));
-            if (publicIpOpt) {
-                logger.info("Public IP address: " + publicIpOpt->toString());
+            auto publicIp = sf::IpAddress::getPublicAddress(sf::seconds(2));
+            if (publicIp) {
+                std::cout << "Public IP address: " << publicIp->toString() << std::endl;
             }
             else {
-                logger.warning("Could not determine public IP address");
+                std::cout << "Could not determine public IP address" << std::endl;
             }
         }
-        catch (const std::exception& e) {
-            logger.warning("Could not determine public IP address: " + std::string(e.what()));
-        }
-        catch (...) {
-            logger.warning("Could not determine public IP address: unknown error");
+        catch (const std::exception& ex) {
+            std::cerr << "Error getting public IP: " << ex.what() << std::endl;
         }
 
-        running.store(true);
-
-        // Start accept thread
-        acceptThread = std::thread(&NetworkManager::acceptClientConnections, this);
-
-        // Start receive thread
-        receiveThread = std::thread(&NetworkManager::receiveClientMessages, this);
-
+        d.setBlocking(false);
+        f = true;
+        l = ConnectionState::CONNECTED;
         return true;
     }
-    catch (const std::exception& e) {
-        logger.error("Exception in start: " + std::string(e.what()));
-        return false;
-    }
-    catch (...) {
-        logger.error("Unknown exception in start");
+    catch (const std::exception& ex) {
+        std::cerr << "Exception in hostGame: " << ex.what() << std::endl;
+        f = false;
+        l = ConnectionState::DISCONNECTED;
         return false;
     }
 }
 
-void NetworkManager::stop()
+bool NetworkManager::joinGame(const sf::IpAddress& address, unsigned short port)
 {
-    {
-        std::lock_guard<std::mutex> lock(networkMutex);
+    try {
+        a = false;
+        l = ConnectionState::CONNECTING;
 
-        if (!running.load()) {
+        std::cout << "Connecting to " << address.toString() << ":" << port << "..." << std::endl;
+
+        // Set timeout for connection attempts
+        c.setBlocking(true);
+        sf::Socket::Status status = c.connect(address, port, sf::seconds(5));
+        c.setBlocking(false);
+
+        if (status != sf::Socket::Status::Done) {
+            std::cerr << "Failed to connect to " << address.toString() << ":" << port << std::endl;
+            l = ConnectionState::DISCONNECTED;
+            return false;
+        }
+
+        std::cout << "Successfully connected to server!" << std::endl;
+        f = true;
+        l = ConnectionState::AUTHENTICATING; // Move to authenticating until we get player ID
+        i.restart();
+        return true;
+    }
+    catch (const std::exception& ex) {
+        std::cerr << "Exception in joinGame: " << ex.what() << std::endl;
+        f = false;
+        l = ConnectionState::DISCONNECTED;
+        return false;
+    }
+}
+
+bool NetworkManager::sendClientSimulation(const GameState& clientState)
+{
+    if (a || !f) return false;
+
+    try {
+        sf::Packet packet;
+        packet << static_cast<uint32_t>(static_cast<int>(MessageType::CLIENT_SIMULATION)) << clientState;
+
+        sf::Socket::Status status = c.send(packet);
+        if (status != sf::Socket::Status::Done) {
+            j++;
+            return false;
+        }
+
+        return true;
+    }
+    catch (const std::exception& ex) {
+        std::cerr << "Exception in sendClientSimulation: " << ex.what() << std::endl;
+        return false;
+    }
+}
+
+bool NetworkManager::sendServerValidation(const GameState& validatedState, int clientId)
+{
+    if (!a || !f) return false;
+
+    try {
+        sf::Packet packet;
+        packet << static_cast<uint32_t>(static_cast<int>(MessageType::SERVER_VALIDATION)) << validatedState;
+
+        // Find the client socket matching the ID
+        if (clientId <= 0 || clientId > static_cast<int>(b.size())) {
+            std::cerr << "Invalid client ID in sendServerValidation: " << clientId << std::endl;
+            return false;
+        }
+
+        sf::TcpSocket* clientSocket = b[clientId - 1]; // Client IDs are 1-based, array is 0-based
+        if (!clientSocket) {
+            std::cerr << "Null client socket for ID: " << clientId << std::endl;
+            return false;
+        }
+
+        sf::Socket::Status status = clientSocket->send(packet);
+        if (status != sf::Socket::Status::Done) {
+            j++;
+            return false;
+        }
+
+        return true;
+    }
+    catch (const std::exception& ex) {
+        std::cerr << "Exception in sendServerValidation: " << ex.what() << std::endl;
+        return false;
+    }
+}
+
+void NetworkManager::update()
+{
+    try {
+        if (!f) {
+            // Return early if we're not connected
             return;
         }
 
-        running.store(false);
-
-        try {
-            listener.close();
+        // Check for timeouts (5 seconds without data)
+        if (i.getElapsedTime().asSeconds() > 5.0f) {
+            std::cerr << "Connection timed out - no data received for 5 seconds" << std::endl;
+            disconnect();
+            return;
         }
-        catch (const std::exception& e) {
-            logger.warning("Exception when closing listener: " + std::string(e.what()));
+
+        // Send heartbeat every second
+        static sf::Clock heartbeatClock;
+        if (heartbeatClock.getElapsedTime().asSeconds() > 1.0f) {
+            try {
+                sf::Packet heartbeatPacket;
+                heartbeatPacket << static_cast<uint32_t>(static_cast<int>(MessageType::HEARTBEAT));
+
+                if (a) {
+                    for (auto client : b) {
+                        if (client) {
+                            sf::Socket::Status status = client->send(heartbeatPacket);
+                            if (status != sf::Socket::Status::Done) {
+                                j++;
+                            }
+                        }
+                    }
+                }
+                else {
+                    sf::Socket::Status status = c.send(heartbeatPacket);
+                    if (status != sf::Socket::Status::Done) {
+                        j++;
+                    }
+                }
+            }
+            catch (const std::exception& ex) {
+                std::cerr << "Exception sending heartbeat: " << ex.what() << std::endl;
+            }
+
+            heartbeatClock.restart();
+        }
+
+        if (a) {
+            // Server mode: accept new connections
+            try {
+                sf::TcpSocket* newClient = new sf::TcpSocket();
+                sf::Socket::Status status = d.accept(*newClient);
+
+                if (status == sf::Socket::Status::Done) {
+                    newClient->setBlocking(false);
+
+                    // Log connection info
+                    if (auto remoteAddress = newClient->getRemoteAddress()) {
+                        std::cout << "New client connecting from: " << remoteAddress->toString() << std::endl;
+                    }
+                    else {
+                        std::cout << "New client connecting from: unknown address" << std::endl;
+                    }
+
+                    b.push_back(newClient);
+
+                    // Create a unique ID for the client (use client index + 1 to avoid ID 0)
+                    int clientId = static_cast<int>(b.size()); // This will be 1 for the first client
+
+                    // Send player ID to the client
+                    sf::Packet idPacket;
+                    idPacket << static_cast<uint32_t>(static_cast<int>(MessageType::PLAYER_ID)) << static_cast<uint32_t>(clientId);
+                    sf::Socket::Status sendStatus = newClient->send(idPacket);
+
+                    if (sendStatus != sf::Socket::Status::Done) {
+                        std::cerr << "Failed to send player ID to client" << std::endl;
+                    }
+
+                    // Create a new player for this client if gameServer exists
+                    if (g && !g->getPlanets().empty()) {
+                        const auto& planets = g->getPlanets();
+                        if (!planets.empty() && planets[0]) {
+                            sf::Vector2f spawnPos = planets[0]->getPosition() +
+                                sf::Vector2f(0, -(planets[0]->getRadius() + GameConstants::ROCKET_SIZE + 30.0f));
+                            g->addPlayer(clientId, spawnPos, sf::Color::Red);
+                        }
+                        else {
+                            g->addPlayer(clientId, sf::Vector2f(400.f, 100.f), sf::Color::Red);
+                        }
+                    }
+
+                    std::cout << "New client connected with ID: " << clientId << std::endl;
+                }
+                else {
+                    // No new connection, clean up allocated socket
+                    delete newClient;
+                }
+            }
+            catch (const std::exception& ex) {
+                std::cerr << "Exception accepting new connection: " << ex.what() << std::endl;
+            }
+
+            // Check for messages from clients
+            for (size_t i = 0; i < b.size(); i++) {
+                sf::TcpSocket* client = b[i];
+
+                if (!client) {
+                    continue;
+                }
+
+                try {
+                    sf::Packet packet;
+                    sf::Socket::Status status = client->receive(packet);
+
+                    if (status == sf::Socket::Status::Done) {
+                        if (packet.getDataSize() > 0) {
+                            uint32_t msgType;
+                            if (packet >> msgType) {
+                                // Client ID is index+1
+                                int clientId = static_cast<int>(i + 1);
+
+                                switch (static_cast<MessageType>(msgType)) {
+                                case MessageType::PLAYER_INPUT:
+                                {
+                                    PlayerInput input;
+                                    if (packet >> input) {
+                                        // Override the player ID with the client ID for security
+                                        input.a = clientId;
+
+                                        if (onPlayerInputReceived) {
+                                            onPlayerInputReceived(clientId, input);
+                                        }
+                                    }
+                                    break;
+                                }
+                                case MessageType::CLIENT_SIMULATION:
+                                {
+                                    GameState clientState;
+                                    if (packet >> clientState) {
+                                        if (onClientSimulationReceived) {
+                                            onClientSimulationReceived(clientId, clientState);
+                                        }
+                                    }
+                                    break;
+                                }
+                                case MessageType::DISCONNECT:
+                                    std::cout << "Client " << clientId << " requested disconnect" << std::endl;
+                                    // Handle client disconnect - clean up client socket and game resources
+                                    client->disconnect();
+                                    delete client;
+                                    b[i] = nullptr;
+
+                                    if (g) {
+                                        g->removePlayer(clientId);
+                                    }
+                                    break;
+
+                                default:
+                                    std::cerr << "Received unknown message type from client: " << msgType << std::endl;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    else if (status == sf::Socket::Status::Disconnected) {
+                        int clientId = static_cast<int>(i + 1);
+                        std::cout << "Client " << clientId << " disconnected" << std::endl;
+
+                        // Clean up client socket and game resources
+                        delete client;
+                        b[i] = nullptr;
+
+                        if (g) {
+                            g->removePlayer(clientId);
+                        }
+                    }
+                }
+                catch (const std::exception& ex) {
+                    std::cerr << "Exception processing client message: " << ex.what() << std::endl;
+                }
+            }
+
+            // Remove null client pointers from the vector
+            b.erase(
+                std::remove_if(b.begin(), b.end(),
+                    [](sf::TcpSocket* client) { return client == nullptr; }),
+                b.end()
+            );
+        }
+        else {
+            // Client mode - improved error handling
+            sf::Packet packet;
+            sf::Socket::Status status = c.receive(packet);
+
+            if (status == sf::Socket::Status::Done) {
+                i.restart();
+
+                // Ensure packet is not empty before trying to read from it
+                if (packet.getDataSize() > 0) {
+                    uint32_t msgType;
+                    if (packet >> msgType) {
+                        switch (static_cast<MessageType>(msgType)) {
+                        case MessageType::PLAYER_ID:
+                        {
+                            uint32_t playerId;
+                            if (packet >> playerId) {
+                                if (h) {
+                                    std::cout << "Received player ID from server: " << playerId << std::endl;
+
+                                    // Set the player ID and update connection state
+                                    h->setLocalPlayerId(static_cast<int>(playerId));
+
+                                    // Explicitly transition to waiting for state
+                                    l = ConnectionState::CONNECTED;
+                                    std::cout << "Connection state updated to waiting for game state" << std::endl;
+                                }
+                                else {
+                                    std::cerr << "Error: Received player ID but gameClient is null" << std::endl;
+                                }
+                            }
+                        }
+                        break;
+                        case MessageType::GAME_STATE:
+                        {
+                            // Measure ping
+                            static sf::Clock pingClock;
+                            k = pingClock.restart().asMilliseconds();
+
+                            // Handle game state with additional safety
+                            GameState state;
+                            try {
+                                if (packet >> state) {
+                                    if (onGameStateReceived && h) {
+                                        onGameStateReceived(state);
+                                    }
+                                }
+                                else {
+                                    std::cerr << "Failed to parse game state packet" << std::endl;
+                                }
+                            }
+                            catch (const std::exception& ex) {
+                                std::cerr << "Exception parsing game state: " << ex.what() << std::endl;
+                            }
+                        }
+                        break;
+                        case MessageType::SERVER_VALIDATION:
+                        {
+                            GameState validatedState;
+                            try {
+                                if (packet >> validatedState) {
+                                    if (onServerValidationReceived && h) {
+                                        onServerValidationReceived(validatedState);
+                                    }
+                                }
+                                else {
+                                    std::cerr << "Failed to parse server validation packet" << std::endl;
+                                }
+                            }
+                            catch (const std::exception& ex) {
+                                std::cerr << "Exception parsing server validation: " << ex.what() << std::endl;
+                            }
+                        }
+                        break;
+                        case MessageType::HEARTBEAT:
+                            // Just a keep-alive, no action needed
+                            break;
+                        case MessageType::DISCONNECT:
+                            std::cout << "Disconnected from server" << std::endl;
+                            f = false;
+                            l = ConnectionState::DISCONNECTED;
+                            c.disconnect();
+                            break;
+                        default:
+                            std::cerr << "Received unknown message type: " << msgType << std::endl;
+                            break;
+                        }
+                    }
+                    else {
+                        std::cerr << "Failed to read message type from packet" << std::endl;
+                    }
+                }
+            }
+            else if (status == sf::Socket::Status::Disconnected) {
+                std::cout << "Lost connection to server" << std::endl;
+                f = false;
+                l = ConnectionState::DISCONNECTED;
+            }
+        }
+
+        // Check if it's time to sync with server for client simulation
+        if (!a && h && f && l == ConnectionState::CONNECTED) {
+            if (n.getElapsedTime().asSeconds() >= m) {
+                if (h->isPendingValidation()) {
+                    GameState clientSim = h->getLocalSimulation();
+                    sendClientSimulation(clientSim);
+                    n.restart();
+                }
+            }
         }
     }
+    catch (const std::exception& ex) {
+        std::cerr << "Exception in update: " << ex.what() << std::endl;
+    }
+    catch (...) {
+        std::cerr << "Unknown exception in update" << std::endl;
+    }
+}
 
-    // Wait for threads to finish
+void NetworkManager::disconnect()
+{
     try {
-        if (acceptThread.joinable()) {
-            acceptThread.join();
+        if (f) {
+            // Send disconnect message
+            if (!a) {
+                try {
+                    sf::Packet disconnectPacket;
+                    disconnectPacket << static_cast<uint32_t>(static_cast<int>(MessageType::DISCONNECT));
+                    c.send(disconnectPacket);
+                }
+                catch (...) {
+                    // Ignore errors when trying to send disconnect message
+                }
+            }
         }
 
-        if (receiveThread.joinable()) {
-            receiveThread.join();
+        if (a) {
+            try {
+                d.close();
+            }
+            catch (...) {
+                // Ignore errors when closing listener
+            }
+
+            // Disconnect all clients
+            for (auto client : b) {
+                if (client) {
+                    try {
+                        // Send disconnect message to clients
+                        sf::Packet disconnectPacket;
+                        disconnectPacket << static_cast<uint32_t>(static_cast<int>(MessageType::DISCONNECT));
+                        client->send(disconnectPacket);
+
+                        client->disconnect();
+                        delete client;
+                    }
+                    catch (...) {
+                        // Ignore errors and continue cleanup
+                    }
+                }
+            }
+            b.clear();
+        }
+        else {
+            try {
+                c.disconnect();
+            }
+            catch (...) {
+                // Ignore errors when disconnecting
+            }
+        }
+
+        f = false;
+        l = ConnectionState::DISCONNECTED;
+        std::cout << "Disconnected from network" << std::endl;
+    }
+    catch (const std::exception& ex) {
+        std::cerr << "Exception in disconnect: " << ex.what() << std::endl;
+        // Force disconnect state even if there was an error
+        f = false;
+        l = ConnectionState::DISCONNECTED;
+    }
+    catch (...) {
+        std::cerr << "Unknown exception in disconnect" << std::endl;
+        // Force disconnect state even if there was an error
+        f = false;
+        l = ConnectionState::DISCONNECTED;
+    }
+}
+
+void NetworkManager::enableRobustNetworking()
+{
+    try {
+        // Set non-blocking sockets with timeouts
+        if (a) {
+            for (auto* client : b) {
+                if (client) {
+                    client->setBlocking(false);
+                }
+            }
+        }
+        else {
+            c.setBlocking(false);
         }
     }
-    catch (const std::exception& e) {
-        logger.warning("Exception when joining threads: " + std::string(e.what()));
+    catch (const std::exception& ex) {
+        std::cerr << "Exception in enableRobustNetworking: " << ex.what() << std::endl;
     }
-
-    logger.info("Network manager stopped");
 }
 
 bool NetworkManager::sendGameState(const GameState& state)
 {
-    if (!running.load()) {
-        return false;
-    }
+    if (!a || !f) return false;
 
     try {
         sf::Packet packet;
-        packet << static_cast<uint32_t>(MessageType::GAME_STATE) << state;
+        packet << static_cast<uint32_t>(static_cast<int>(MessageType::GAME_STATE)) << state;
 
-        clientManager.sendToAll(packet);
-        return true;
+        bool allSucceeded = true;
+
+        for (auto client : b) {
+            if (!client) continue;
+
+            sf::Socket::Status status = client->send(packet);
+            if (status != sf::Socket::Status::Done) {
+                allSucceeded = false;
+                j++;
+            }
+        }
+
+        return allSucceeded;
     }
-    catch (const std::exception& e) {
-        logger.error("Exception in sendGameState: " + std::string(e.what()));
+    catch (const std::exception& ex) {
+        std::cerr << "Exception in sendGameState: " << ex.what() << std::endl;
         return false;
     }
 }
 
-bool NetworkManager::sendPlayerIdentity(int clientId)
+bool NetworkManager::sendPlayerInput(const PlayerInput& input)
 {
-    if (!running.load()) {
-        return false;
-    }
+    if (a || !f) return false;
 
     try {
         sf::Packet packet;
-        packet << static_cast<uint32_t>(MessageType::PLAYER_ID) << static_cast<uint32_t>(clientId);
+        packet << static_cast<uint32_t>(static_cast<int>(MessageType::PLAYER_INPUT)) << input;
 
-        clientManager.sendTo(clientId, packet);
+        sf::Socket::Status status = c.send(packet);
+        if (status != sf::Socket::Status::Done) {
+            j++;
+            return false;
+        }
+
         return true;
     }
-    catch (const std::exception& e) {
-        logger.error("Exception in sendPlayerIdentity: " + std::string(e.what()));
+    catch (const std::exception& ex) {
+        std::cerr << "Exception in sendPlayerInput: " << ex.what() << std::endl;
         return false;
     }
 }
 
-void NetworkManager::setPlayerInputCallback(std::function<void(int clientId, const PlayerInput&)> callback)
+float NetworkManager::getPing() const
 {
-    this->onPlayerInputReceived = callback;
+    return static_cast<float>(k);
 }
 
-void NetworkManager::setClientAuthenticatedCallback(std::function<void(int clientId, const std::string&)> callback)
+int NetworkManager::getPacketLoss() const
 {
-    this->onClientAuthenticated = callback;
-}
-
-void NetworkManager::setClientDisconnectedCallback(std::function<void(int clientId)> callback)
-{
-    this->onClientDisconnected = callback;
-}
-
-int NetworkManager::findNextAvailablePlayerId() {
-    // Get current client IDs
-    std::vector<int> currentIds = clientManager.getClientIds();
-
-    // Start from player ID 1 (0 is reserved for host)
-    for (int id = 1; id < 8; id++) {
-        bool idTaken = false;
-        for (int existingId : currentIds) {
-            if (existingId == id) {
-                idTaken = true;
-                break;
-            }
-        }
-        if (!idTaken) return id;
-    }
-
-    // If all IDs are taken, return a high number
-    return 99;
-}
-void NetworkManager::acceptClientConnections()
-{
-    while (running.load()) {
-        try {
-            sf::TcpSocket* newClient = new sf::TcpSocket();
-
-            sf::Socket::Status status = listener.accept(*newClient);
-
-            if (status == sf::Socket::Status::Done) {
-                newClient->setBlocking(false);
-
-                // Get the next available player ID
-                int clientId = findNextAvailablePlayerId();
-
-                // Add client to manager - make sure to match the method signature!
-                clientId = clientManager.addClient(newClient, clientId);
-
-                // Send player ID to client - this lets them know which pre-created rocket to use
-                sendPlayerIdentity(clientId);
-
-                std::stringstream ss;
-                ss << "New client connected with ID: " << clientId;
-                logger.info(ss.str());
-
-                // No need to create a new player - just use the pre-created one with this ID
-                logger.info("Client " + std::to_string(clientId) + " assigned to pre-existing rocket");
-            }
-            else {
-                // No new connection, sleep a bit to avoid CPU hogging
-                delete newClient;
-                std::this_thread::sleep_for(std::chrono::milliseconds(50));
-            }
-        }
-        catch (const std::exception& e) {
-            logger.error("Exception in acceptClientConnections: " + std::string(e.what()));
-            // Continue after error and sleep to avoid CPU hogging if in error state
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }
-        catch (...) {
-            logger.error("Unknown exception in acceptClientConnections");
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }
-    }
-}
-void NetworkManager::receiveClientMessages()
-{
-    while (running.load()) {
-        try {
-            // Process messages from all clients
-            std::vector<int> clientIds;
-            try {
-                clientIds = clientManager.getClientIds();
-            }
-            catch (const std::exception& e) {
-                logger.error("Exception getting client IDs: " + std::string(e.what()));
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
-                continue;
-            }
-
-            for (int clientId : clientIds) {
-                ClientData* client = nullptr;
-                try {
-                    client = clientManager.getClient(clientId);
-                }
-                catch (const std::exception& e) {
-                    logger.error("Exception getting client data: " + std::string(e.what()));
-                    continue;
-                }
-
-                if (!client || !client->socket) {
-                    continue;
-                }
-
-                sf::Packet packet;
-                sf::Socket::Status status;
-                try {
-                    status = client->socket->receive(packet);
-                }
-                catch (const std::exception& e) {
-                    logger.error("Exception receiving from client " + std::to_string(clientId) + ": " + std::string(e.what()));
-                    continue;
-                }
-
-                if (status == sf::Socket::Status::Done) {
-                    client->updateActivity();
-                    try {
-                        handleClientMessage(clientId, packet);
-                    }
-                    catch (const std::exception& e) {
-                        logger.error("Exception handling message from client " + std::to_string(clientId) + ": " + std::string(e.what()));
-                    }
-                }
-                else if (status == sf::Socket::Status::Disconnected) {
-                    try {
-                        if (onClientDisconnected) {
-                            onClientDisconnected(clientId);
-                        }
-                        clientManager.removeClient(clientId);
-                    }
-                    catch (const std::exception& e) {
-                        logger.error("Exception removing disconnected client " + std::to_string(clientId) + ": " + std::string(e.what()));
-                    }
-                }
-            }
-
-            // Check for client timeouts
-            try {
-                clientManager.checkTimeouts();
-            }
-            catch (const std::exception& e) {
-                logger.error("Exception checking timeouts: " + std::string(e.what()));
-            }
-
-            // Send heartbeats periodically
-            static auto lastHeartbeat = std::chrono::steady_clock::now();
-            auto now = std::chrono::steady_clock::now();
-
-            if (std::chrono::duration_cast<std::chrono::seconds>(now - lastHeartbeat).count() >= 1) {
-                try {
-                    sendHeartbeats();
-                }
-                catch (const std::exception& e) {
-                    logger.error("Exception sending heartbeats: " + std::string(e.what()));
-                }
-                lastHeartbeat = now;
-            }
-
-            // Sleep a bit to avoid CPU hogging
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        }
-        catch (const std::exception& e) {
-            logger.error("Exception in receiveClientMessages: " + std::string(e.what()));
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }
-        catch (...) {
-            logger.error("Unknown exception in receiveClientMessages");
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }
-    }
-}
-
-void NetworkManager::handleClientMessage(int clientId, sf::Packet& packet)
-{
-    if (packet.getDataSize() == 0) {
-        logger.warning("Received empty packet from client " + std::to_string(clientId));
-        return;
-    }
-
-    uint32_t msgTypeInt;
-    if (!(packet >> msgTypeInt)) {
-        logger.warning("Received malformed packet from client " + std::to_string(clientId));
-        return;
-    }
-
-    MessageType msgType = static_cast<MessageType>(msgTypeInt);
-
-    switch (msgType) {
-    case MessageType::PLAYER_INPUT:
-        handlePlayerInput(clientId, packet);
-        break;
-
-    case MessageType::AUTHENTICATION:
-        handleAuthentication(clientId, packet);
-        break;
-
-    case MessageType::HEARTBEAT:
-        // Just update client activity, already done in receiveClientMessages
-        break;
-
-    case MessageType::DISCONNECT:
-        if (onClientDisconnected) {
-            onClientDisconnected(clientId);
-        }
-        clientManager.removeClient(clientId);
-        break;
-
-    default:
-        logger.warning("Received unknown message type from client " + std::to_string(clientId));
-        break;
-    }
-}
-
-void NetworkManager::handlePlayerInput(int clientId, sf::Packet& packet)
-{
-    PlayerInput input;
-    if (!(packet >> input)) {
-        logger.warning("Received malformed player input from client " + std::to_string(clientId));
-        return;
-    }
-
-    // Override the player ID with the client ID for security
-    input.playerId = clientId;
-
-    if (onPlayerInputReceived) {
-        onPlayerInputReceived(clientId, input);
-    }
-}
-
-void NetworkManager::handleAuthentication(int clientId, sf::Packet& packet)
-{
-    std::string username;
-    if (!(packet >> username)) {
-        logger.warning("Received malformed authentication from client " + std::to_string(clientId));
-        return;
-    }
-
-    ClientData* client = clientManager.getClient(clientId);
-    if (client) {
-        client->authenticated = true;
-        client->username = username;
-
-        std::stringstream ss;
-        ss << "Client " << clientId << " authenticated as " << username;
-        logger.info(ss.str());
-
-        if (onClientAuthenticated) {
-            onClientAuthenticated(clientId, username);
-        }
-    }
-}
-
-void NetworkManager::sendHeartbeats()
-{
-    sf::Packet packet;
-    packet << static_cast<uint32_t>(MessageType::HEARTBEAT);
-
-    clientManager.sendToAll(packet);
+    return j;
 }

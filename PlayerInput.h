@@ -1,21 +1,25 @@
 // PlayerInput.h
 #pragma once
 #include <SFML/Network.hpp>
+#include "GameState.h"
 
 struct PlayerInput {
-    int playerId;
-    bool thrustForward;
-    bool thrustBackward;
-    bool rotateLeft;
-    bool rotateRight;
-    bool switchVehicle;
-    float thrustLevel;
-    float deltaTime;
+    int a; // playerId
+    bool b; // thrustForward
+    bool c; // thrustBackward
+    bool d; // rotateLeft
+    bool e; // rotateRight
+    bool f; // switchVehicle
+    float g; // thrustLevel
+    float h; // deltaTime
+    float i; // clientTimestamp - when the client generated this input
+    float j; // lastServerStateTimestamp - the timestamp of the last state client had
+    RocketState k; // clientRocketState - current client rocket state for validation
 
     // Default constructor
-    PlayerInput() : playerId(0), thrustForward(false), thrustBackward(false),
-        rotateLeft(false), rotateRight(false), switchVehicle(false),
-        thrustLevel(0.0f), deltaTime(0.0f) {
+    PlayerInput() : a(0), b(false), c(false),
+        d(false), e(false), f(false),
+        g(0.0f), h(0.0f), i(0.0f), j(0.0f) {
     }
 
     // Packet operators for serialization
@@ -25,17 +29,19 @@ struct PlayerInput {
 
 // Inline implementation of the packet operators
 inline sf::Packet& operator <<(sf::Packet& packet, const PlayerInput& input) {
-    return packet << input.playerId
-        << input.thrustForward << input.thrustBackward
-        << input.rotateLeft << input.rotateRight
-        << input.switchVehicle << input.thrustLevel
-        << input.deltaTime;
+    return packet << input.a
+        << input.b << input.c
+        << input.d << input.e
+        << input.f << input.g
+        << input.h << input.i
+        << input.j << input.k;
 }
 
 inline sf::Packet& operator >>(sf::Packet& packet, PlayerInput& input) {
-    return packet >> input.playerId
-        >> input.thrustForward >> input.thrustBackward
-        >> input.rotateLeft >> input.rotateRight
-        >> input.switchVehicle >> input.thrustLevel
-        >> input.deltaTime;
+    return packet >> input.a
+        >> input.b >> input.c
+        >> input.d >> input.e
+        >> input.f >> input.g
+        >> input.h >> input.i
+        >> input.j >> input.k;
 }

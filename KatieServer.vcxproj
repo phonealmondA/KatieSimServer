@@ -140,6 +140,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GameClient.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ServerLogger.cpp" />
     <ClCompile Include="ClientManager.cpp" />
@@ -153,8 +154,10 @@
     <ClCompile Include="VectorHelper.cpp" />
     <ClCompile Include="PlayerInput.cpp" />
     <ClCompile Include="ServerConfig.cpp" />
+    <ClCompile Include="VehicleManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameClient.h" />
     <ClInclude Include="ServerLogger.h" />
     <ClInclude Include="ClientManager.h" />
     <ClInclude Include="NetworkManager.h" />
@@ -169,6 +172,7 @@
     <ClInclude Include="VectorHelper.h" />
     <ClInclude Include="ClientData.h" />
     <ClInclude Include="ServerConfig.h" />
+    <ClInclude Include="VehicleManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

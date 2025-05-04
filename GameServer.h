@@ -1,50 +1,68 @@
 // GameServer.h
 #pragma once
+#include "GravitySimulator.h"
+#include "VehicleManager.h"
+#include "GameState.h"
+#include "PlayerInput.h"
 #include <vector>
 #include <map>
 #include <mutex>
-#include "GravitySimulator.h"
-#include "Planet.h"
-#include "Rocket.h"
-#include "GameState.h"
-#include "PlayerInput.h"
-#include "ServerLogger.h"
-#include "ServerConfig.h"
 
 class GameServer {
 private:
-    std::vector<Planet*> planets;
-    std::map<int, Rocket*> rockets;
-    GravitySimulator simulator;
-    std::mutex gameStateMutex;
+    std::vector<Planet*> a; // planets
+    std::map<int, VehicleManager*> b; // players
+    GravitySimulator c; // simulator
+    std::mutex d; // gameStateMutex
 
-    unsigned long sequenceNumber;
-    float gameTime;
+    unsigned long e; // sequenceNumber
+    float f; // gameTime
 
-    ServerLogger& logger;
-    ServerConfig& config;
+    // New members for distributed simulation
+    std::map<int, GameState> g; // clientSimulations - stores each client's simulation state
+    std::map<int, float> h; // lastClientUpdateTime - when each client last sent their simulation
+    std::map<int, bool> i; // clientSimulationValid - whether each client's simulation is valid
+    float j; // validationThreshold - how much difference is allowed before correcting client
 
 public:
-    GameServer(ServerLogger& logger, ServerConfig& config);
+    GameServer();
     ~GameServer();
 
     void initialize();
     void update(float deltaTime);
-    void handlePlayerInput(int playerId, const PlayerInput& input);
-    void handlePlayerDisconnect(int playerId);
-    GameState getGameState();
 
-    void addPlayer(int playerId, sf::Vector2f initialPos = sf::Vector2f(0, 0), sf::Color color = sf::Color::White);
+    // Handle input from clients
+    void handlePlayerInput(int playerId, const PlayerInput& input);
+
+    // New method to process client simulation states
+    void processClientSimulation(int playerId, const GameState& clientState);
+
+    // Validate client simulation against server state
+    GameState validateClientSimulation(int playerId, const GameState& clientState);
+
+    // Get the current game state to send to clients
+    GameState getGameState() const;
+
+    // Add/remove players
+    int addPlayer(int playerId, sf::Vector2f initialPos = sf::Vector2f(0, 0), sf::Color color = sf::Color::White);
     void removePlayer(int playerId);
 
-    // For network manager to access
-    const std::vector<Planet*>& getPlanets() const { return planets; }
-    const std::map<int, Rocket*>& getRockets() const { return rockets; }
-    Rocket* getRocket(int playerId) {
-        auto it = rockets.find(playerId);
-        return (it != rockets.end()) ? it->second : nullptr;
+    // Synchronize states between server and clients
+    void synchronizeState();
+
+    // Getters
+    const std::vector<Planet*>& getPlanets() const { return a; }
+    const std::map<int, VehicleManager*>& getPlayers() const { return b; }
+    VehicleManager* getPlayer(int playerId) {
+        auto it = b.find(playerId);
+        return (it != b.end()) ? it->second : nullptr;
     }
 
+    // Set validation threshold
+    void setValidationThreshold(float threshold) { j = threshold; }
+    float getValidationThreshold() const { return j; }
+
 private:
+    // Create the initial solar system
     void createSolarSystem();
 };
