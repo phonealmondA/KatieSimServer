@@ -6,7 +6,7 @@
 #include "PlayerInput.h"
 #include <vector>
 #include <map>
-
+#include <SFML/Graphics.hpp>
 // Forward declaration for connection state
 enum class ClientConnectionState {
     DISCONNECTED,

@@ -1,23 +1,26 @@
 // Planet.h
 #pragma once
 #include "GameObject.h"
-#include <SFML/Graphics/Color.hpp>
-#include <vector>
-
+#include <SFML/Graphics.hpp>
 class Planet : public GameObject {
 private:
     float mass;
     float radius;
-    sf::Color color;  // Changed to sf::Color
+    int ownerId; // Added owner ID
 
 public:
     Planet(sf::Vector2f pos, float radius, float mass, sf::Color color = sf::Color::Blue);
     void update(float deltaTime) override;
+    void draw(sf::RenderWindow& window) override;
 
     float getMass() const;
     float getRadius() const;
     void setMass(float newMass);
     void updateRadiusFromMass();
-    sf::Color getColor() const;  // Changed to return sf::Color
+    sf::Color getColor() const;
     void setPosition(sf::Vector2f pos);
+
+    // Add owner ID getters/setters
+    int getOwnerId() const { return ownerId; }
+    void setOwnerId(int id) { ownerId = id; }
 };

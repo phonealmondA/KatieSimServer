@@ -4,7 +4,7 @@
 #include "Planet.h"
 #include "Rocket.h"
 #include "GameConstants.h"
-
+#include <SFML/Graphics.hpp>
 // Forward declaration
 class VehicleManager;
 

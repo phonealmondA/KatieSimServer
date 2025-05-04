@@ -2,7 +2,7 @@
 #pragma once
 #include <string>
 #include "GameConstants.h"
-
+#include <SFML/Graphics.hpp>
 class ServerConfig {
 private:
     unsigned short port;

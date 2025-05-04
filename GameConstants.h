@@ -1,7 +1,7 @@
 // GameConstants.h
 #pragma once
 #include <cmath>
-
+#include <SFML/Graphics.hpp>
 namespace GameConstants {
     // Gravitational constants
     constexpr float G = 100.0f;  // Gravitational constant

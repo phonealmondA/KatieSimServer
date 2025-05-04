@@ -7,7 +7,7 @@
 #include <iomanip>
 #include <mutex>
 #include <sstream> 
-
+#include <SFML/Graphics.hpp>
 class ServerLogger {
 private:
     std::ofstream logFile;

@@ -2,7 +2,7 @@
 #pragma once
 #include <SFML/System/Vector2.hpp>
 #include <cmath>
-
+#include <SFML/Graphics.hpp>
 // Vector2 helper functions
 inline sf::Vector2f normalize(const sf::Vector2f& source) {
     float length = std::sqrt(source.x * source.x + source.y * source.y);

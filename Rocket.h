@@ -6,7 +6,7 @@
 #include "GameState.h"
 #include <vector>
 #include <SFML/Graphics/Color.hpp>
-
+#include <SFML/Graphics.hpp>
 class Rocket : public GameObject {
 private:
     float a; // rotation

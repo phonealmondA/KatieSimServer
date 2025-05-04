@@ -3,7 +3,7 @@
 #include <SFML/Network.hpp>
 #include <chrono>
 #include <string>
-
+#include <SFML/Graphics.hpp>
 struct ClientData {
     int clientId;
     sf::TcpSocket* socket;

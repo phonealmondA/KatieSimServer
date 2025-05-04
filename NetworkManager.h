@@ -9,7 +9,7 @@
 #include <atomic>
 #include "GameState.h"
 #include "PlayerInput.h"
-
+#include <SFML/Graphics.hpp>
 // Forward declarations
 class GameServer;
 class GameClient;

@@ -24,4 +24,8 @@ void GameObject::setPosition(sf::Vector2f pos)
 void GameObject::setVelocity(sf::Vector2f vel)
 {
     velocity = vel;
+}// Add this to GameObject.cpp
+GameObject::GameObject(sf::Vector2f pos, sf::Vector2f vel, sf::Color col)
+    : position(pos), velocity(vel), color(col)
+{
 }

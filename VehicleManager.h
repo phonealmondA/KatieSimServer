@@ -3,9 +3,10 @@
 #include "Rocket.h"
 #include "Car.h"
 #include "Planet.h"
+#include <SFML/Graphics/RenderWindow.hpp>
 #include <memory>
 #include <vector>
-
+#include <SFML/Graphics.hpp>
 enum class VehicleType {
     ROCKET,
     CAR

@@ -2,8 +2,9 @@
 #pragma once
 #include <SFML/Network.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/Color.hpp>
 #include <vector>
-
+#include <SFML/Graphics.hpp>
 // Forward declarations for packet operators
 struct RocketState;
 struct PlanetState;

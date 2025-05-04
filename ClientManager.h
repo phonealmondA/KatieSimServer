@@ -5,7 +5,7 @@
 #include "ClientData.h"
 #include "ServerLogger.h"
 #include "ServerConfig.h"
-
+#include <SFML/Graphics.hpp>
 class ClientManager {
 private:
     std::map<int, ClientData*> clients;

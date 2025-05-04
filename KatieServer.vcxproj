@@ -157,6 +157,7 @@
     <ClCompile Include="VehicleManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Car.h" />
     <ClInclude Include="GameClient.h" />
     <ClInclude Include="ServerLogger.h" />
     <ClInclude Include="ClientManager.h" />

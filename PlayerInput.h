@@ -2,7 +2,7 @@
 #pragma once
 #include <SFML/Network.hpp>
 #include "GameState.h"
-
+#include <SFML/Graphics.hpp>
 struct PlayerInput {
     int a; // playerId
     bool b; // thrustForward

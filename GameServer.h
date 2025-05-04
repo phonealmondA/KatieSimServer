@@ -7,7 +7,7 @@
 #include <vector>
 #include <map>
 #include <mutex>
-
+#include <SFML/Graphics.hpp>
 class GameServer {
 private:
     std::vector<Planet*> a; // planets
