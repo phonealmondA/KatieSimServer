@@ -177,3 +177,9 @@ void Rocket::drawVelocityVector(sf::RenderWindow& window, float scale)
         std::cerr << "Exception in drawVelocityVector: " << ex.what() << std::endl;
     }
 }
+
+void Rocket::draw(sf::RenderWindow& window)
+{
+    // Server doesn't need to draw anything, this is just a stub implementation
+    // to satisfy the linker
+}

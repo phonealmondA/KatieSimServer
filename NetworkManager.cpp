@@ -13,7 +13,8 @@
 #include <algorithm>
 
 NetworkManager::NetworkManager(ClientManager& clientManager, ServerLogger& logger, ServerConfig& config)
-    : a(false), e(0), f(false), g(nullptr), h(nullptr),
+    : a(true), // Always true for server application
+    e(0), f(false), g(nullptr), h(nullptr),
     j(0), k(0), l(ConnectionState::DISCONNECTED), m(0.1f),
     p(clientManager), q(logger), r(config)
 {
@@ -671,7 +672,6 @@ int NetworkManager::getPacketLoss() const
 {
     return j;
 }
-
 bool NetworkManager::start() {
     try {
         // Initialize the network components

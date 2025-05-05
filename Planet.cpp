@@ -17,7 +17,11 @@ Planet::Planet(sf::Vector2f pos, float radius, float mass, sf::Color color)
         updateRadiusFromMass();
     }
 }
-
+void Planet::draw(sf::RenderWindow& window)
+{
+    // Server doesn't need to draw anything, this is just a stub implementation
+    // to satisfy the linker
+}
 void Planet::update(float deltaTime)
 {
     position += velocity * deltaTime;
